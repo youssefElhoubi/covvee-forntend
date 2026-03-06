@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import type { ProjectDetailResponse } from "../../../utils/ProjectDetailResponse";
+import type { ProjectDetailResponse } from "../../../types/ProjectDetailResponse";
 import { ChevronRight, Clock, Code2, FileCode, MoreVertical } from "lucide-react";
 import { LanguageBadge } from "./LanguageBadge";
-import type { FileResponse } from "../../../utils/FileResponse";
+import type { FileResponse } from "../../../types/FileResponse";
 import { RecursiveFolder } from "./RecursiveFolder";
 
 const itemVariants = {

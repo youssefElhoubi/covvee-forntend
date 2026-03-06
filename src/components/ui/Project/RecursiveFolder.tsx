@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { FolderResponse } from "../../../utils/FolderResponse";
+import type { FolderResponse } from "../../../types/FolderResponse";
 import { cn } from "../../../utils/cn";
 import { ChevronDown, ChevronRight, FileCode, Folder, FolderOpen } from "lucide-react";
 import { AnimatePresence ,motion} from "framer-motion";
-import type { FileResponse } from "../../../utils/FileResponse";
+import type { FileResponse } from "../../../types/FileResponse";
 
 
 const FileItem = ({ file }: { file: FileResponse }) => (
