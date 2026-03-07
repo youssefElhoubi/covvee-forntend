@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import ProjectsPage from './pages/projectsPage'
+import { AuthenticatedLayoutDemo } from './pages/LayoutDemo'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/signup" element={<RegisterPage/>} />
           <Route path="/project" element={<ProjectsPage/>} />
+          <Route path="/demo" element={<AuthenticatedLayoutDemo/>} />
         </Routes>
       </BrowserRouter>
     </>

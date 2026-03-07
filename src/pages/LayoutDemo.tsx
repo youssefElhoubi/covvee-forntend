@@ -1,9 +1,9 @@
 import AuthenticatedLayout from "../components/layout/Layout";
-import { MOCK_LAYOUT_PROJECT_DATA } from "../data/mockProjectData";
+import { MOCK_PROJECTS } from "../utils/MOCK_PROJECTS";
 
 export function AuthenticatedLayoutDemo() {
   return (
-    <AuthenticatedLayout projectData={MOCK_LAYOUT_PROJECT_DATA}>
+    <AuthenticatedLayout projectData={MOCK_PROJECTS}>
       <div className="h-full p-6 text-slate-300">
         <h1 className="mb-2 text-xl font-semibold text-slate-100">Editor Surface</h1>
         <p className="max-w-xl text-sm leading-6 text-slate-400">

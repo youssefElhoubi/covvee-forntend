@@ -1,51 +1,51 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { GripVertical, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type {
-  BreadcrumbState,
   FileResponse,
-  FolderResponse,
   ProjectDetailResponse,
   SidebarMode,
 } from "../../types/project.types";
 import { TopNavbar } from "./TopNavbar";
-import { Sidebar } from "./Sidebar";
+import { MultiProjectSidebar } from "./MultiProjectSidebar";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;
-  projectData: ProjectDetailResponse;
+  projectData: ProjectDetailResponse[];
 }
 
-function findInitialFile(projectData: ProjectDetailResponse): BreadcrumbState {
-  if (projectData.rootFiles.length > 0) {
-    return { fileName: projectData.rootFiles[0].name, folderPath: [] };
+interface ExtendedBreadcrumbState {
+  fileName: string;
+  folderPath: string[];
+  projectName: string;
+}
+
+function findInitialFile(projectData: ProjectDetailResponse[]): ExtendedBreadcrumbState {
+  const firstProject = projectData[0];
+  
+  if (!firstProject) {
+    return { fileName: "README.md", folderPath: [], projectName: "Untitled" };
   }
 
-  const scanFolder = (folder: FolderResponse, parents: string[]): BreadcrumbState | null => {
-    if (folder.files.length > 0) {
+  if (firstProject.rootFiles.length > 0) {
+    return { 
+      fileName: firstProject.rootFiles[0].name, 
+      folderPath: [],
+      projectName: firstProject.name
+    };
+  }
+
+  if (firstProject.rootFolders.length > 0) {
+    const firstFolder = firstProject.rootFolders[0];
+    if (firstFolder.files.length > 0) {
       return {
-        fileName: folder.files[0].name,
-        folderPath: [...parents, folder.name],
+        fileName: firstFolder.files[0].name,
+        folderPath: [firstFolder.name],
+        projectName: firstProject.name
       };
     }
-
-    for (const child of folder.children) {
-      const found = scanFolder(child, [...parents, folder.name]);
-      if (found) {
-        return found;
-      }
-    }
-
-    return null;
-  };
-
-  for (const folder of projectData.rootFolders) {
-    const found = scanFolder(folder, []);
-    if (found) {
-      return found;
-    }
   }
 
-  return { fileName: "README.md", folderPath: [] };
+  return { fileName: "README.md", folderPath: [], projectName: firstProject.name };
 }
 
 export default function AuthenticatedLayout({
@@ -53,7 +53,7 @@ export default function AuthenticatedLayout({
   projectData,
 }: AuthenticatedLayoutProps) {
   const initialSelection = useMemo(() => findInitialFile(projectData), [projectData]);
-  const [breadcrumb, setBreadcrumb] = useState<BreadcrumbState>(initialSelection);
+  const [breadcrumb, setBreadcrumb] = useState<ExtendedBreadcrumbState>(initialSelection);
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("expanded");
 
@@ -69,18 +69,26 @@ export default function AuthenticatedLayout({
     });
   };
 
-  const handleSelectFile = (file: FileResponse, path: string[]) => {
+  const handleSelectFile = (file: FileResponse, path: string[], projectName: string) => {
     setSelectedFileId(file.id);
-    setBreadcrumb({ fileName: file.name, folderPath: path });
+    setBreadcrumb({ fileName: file.name, folderPath: path, projectName });
   };
+
+  if (projectData.length === 0) {
+    return (
+      <div className="h-screen overflow-hidden bg-slate-950 text-slate-100 flex items-center justify-center">
+        <p className="text-slate-400">No project data available</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen overflow-hidden bg-slate-950 text-slate-100">
-      <TopNavbar projectName={projectData.name} breadcrumb={breadcrumb} />
+      <TopNavbar projectName={breadcrumb.projectName} breadcrumb={breadcrumb} />
 
       <div className="flex h-[calc(100vh-4rem)]">
-        <Sidebar
-          projectData={projectData}
+        <MultiProjectSidebar
+          projects={projectData}
           sidebarMode={sidebarMode}
           selectedFileId={selectedFileId}
           onSelectFile={handleSelectFile}
@@ -112,3 +120,4 @@ export default function AuthenticatedLayout({
     </div>
   );
 }
+
