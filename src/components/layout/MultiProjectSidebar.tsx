@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
-import { ChevronDown,} from "lucide-react";
 import { cn } from "../../utils/cn";
-import type { FileResponse, ProjectDetailResponse, SidebarMode } from "../../types/project.types";
+import type {  ProjectDetailResponse, SidebarMode } from "../../types/project.types";
 import { ProjectSumary } from "../project/projectSumary";
 
 const SIDEBAR_WIDTH: Record<SidebarMode, number> = {
@@ -13,18 +12,15 @@ const SIDEBAR_WIDTH: Record<SidebarMode, number> = {
 interface MultiProjectSidebarProps {
     projects?: ProjectDetailResponse[];
     sidebarMode: SidebarMode;
-    selectedFileId: string | null;
-    onSelectFile: (file: FileResponse, path: string[], projectName: string) => void;
-    onToggleSidebar: () => void;
+
+    
 }
 
 
 export function MultiProjectSidebar({
     projects,
     sidebarMode,
-    selectedFileId,
-    onSelectFile,
-    onToggleSidebar,
+    
 }: MultiProjectSidebarProps) {
     const isCompact = sidebarMode === "compact";
 
@@ -44,16 +40,7 @@ export function MultiProjectSidebar({
                     >
                         {isCompact ? "P" : "Projects"}
                     </span>
-                    {!isCompact && (
-                        <button
-                            type="button"
-                            onClick={onToggleSidebar}
-                            className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-800/60 hover:text-slate-100"
-                            title="Toggle sidebar"
-                        >
-                            <ChevronDown className="h-4 w-4" />
-                        </button>
-                    )}
+                    
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2">
@@ -65,8 +52,7 @@ export function MultiProjectSidebar({
                                 key={project.id}
                                 project={project}
                                 compact={isCompact}
-                                selectedFileId={selectedFileId}
-                                onSelectFile={onSelectFile}
+
                             />
                         ))
                     )}

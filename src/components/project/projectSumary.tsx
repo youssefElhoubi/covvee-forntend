@@ -1,4 +1,3 @@
-import type { FileResponse } from "../../types/FileResponse";
 import type { ProjectDetailResponse } from "../../types/ProjectDetailResponse";
 import { Code2 } from "lucide-react";
 
@@ -8,8 +7,6 @@ export function ProjectSumary({
 }: {
     project: ProjectDetailResponse;
     compact: boolean;
-    selectedFileId: string | null;
-    onSelectFile: (file: FileResponse, path: string[], projectName: string) => void;
 }) {
 
     if (compact) {
