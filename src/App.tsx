@@ -4,7 +4,8 @@ import LandingPage from './pages/LandingPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import ProjectsPage from './pages/projectsPage'
-import { AuthenticatedLayoutDemo } from './pages/LayoutDemo'
+import AuthenticatedLayout from './components/layout/Layout'
+import { MOCK_PROJECTS } from './utils/MOCK_PROJECTS'
 
 function App() {
 
@@ -16,7 +17,9 @@ function App() {
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/signup" element={<RegisterPage/>} />
           <Route path="/project" element={<ProjectsPage/>} />
-          <Route path="/demo" element={<AuthenticatedLayoutDemo/>} />
+          <Route path="/demo" element={<AuthenticatedLayout projectData={MOCK_PROJECTS}>
+            <ProjectsPage/>
+          </AuthenticatedLayout>} />
         </Routes>
       </BrowserRouter>
     </>

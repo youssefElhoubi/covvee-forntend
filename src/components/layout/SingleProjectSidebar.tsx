@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import { ChevronDown,} from "lucide-react";
 import { cn } from "../../utils/cn";
 import type { FileResponse, ProjectDetailResponse, SidebarMode } from "../../types/project.types";
-import { ProjectSumary } from "../project/projectSumary";
+
+import { ComplateProject } from "../project/complateProject";
 
 const SIDEBAR_WIDTH: Record<SidebarMode, number> = {
     expanded: 280,
@@ -19,7 +20,7 @@ interface MultiProjectSidebarProps {
 }
 
 
-export function MultiProjectSidebar({
+export function SingleProjectSidebar({
     projects,
     sidebarMode,
     selectedFileId,
@@ -61,7 +62,7 @@ export function MultiProjectSidebar({
                         <div className="p-4 text-center text-sm text-slate-500">No projects available</div>
                     ) : (
                         projects?.map((project) => (
-                            <ProjectSumary
+                            <ComplateProject
                                 key={project.id}
                                 project={project}
                                 compact={isCompact}

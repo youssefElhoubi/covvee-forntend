@@ -10,7 +10,8 @@ import { MultiProjectSidebar } from "./MultiProjectSidebar";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;
-  projectData: ProjectDetailResponse[];
+  projectData?: ProjectDetailResponse[];
+
 }
 
 interface ExtendedBreadcrumbState {
@@ -19,8 +20,8 @@ interface ExtendedBreadcrumbState {
   projectName: string;
 }
 
-function findInitialFile(projectData: ProjectDetailResponse[]): ExtendedBreadcrumbState {
-  const firstProject = projectData[0];
+function findInitialFile(projectData?: ProjectDetailResponse[]): ExtendedBreadcrumbState {
+  const firstProject = projectData?.[0];
   
   if (!firstProject) {
     return { fileName: "README.md", folderPath: [], projectName: "Untitled" };
@@ -74,7 +75,7 @@ export default function AuthenticatedLayout({
     setBreadcrumb({ fileName: file.name, folderPath: path, projectName });
   };
 
-  if (projectData.length === 0) {
+  if (projectData?.length === 0) {
     return (
       <div className="h-screen overflow-hidden bg-slate-950 text-slate-100 flex items-center justify-center">
         <p className="text-slate-400">No project data available</p>
