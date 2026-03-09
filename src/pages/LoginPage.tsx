@@ -5,6 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from 'framer-motion';
 import { ArrowRight, Chrome, Code2, Github, Lock, Mail } from "lucide-react";
 import { InputField } from "../components/ui/formes/InputField";
+import { login } from "../services/AuthService";
+import { useState } from "react";
+
 
 type LoginFormData = z.infer<typeof loginSchema>;
 export const LoginPage = () => {
@@ -15,12 +18,15 @@ export const LoginPage = () => {
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
     });
+    const [error, setError] = useState<string|null>(null)
 
     const onSubmit = async (data: LoginFormData) => {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("Login Data:", data);
-        alert("Login Successful! (Check console)");
+        try {
+            await login(data);
+        } catch (error) {
+            console.log(error);
+            setError("Invalid email or password");
+        }
     };
 
     return (
@@ -80,6 +86,15 @@ export const LoginPage = () => {
                                 Forgot password?
                             </a>
                         </div>
+                        {error && (
+                                            <motion.p
+                                                initial={{ opacity: 0, y: -5 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="text-xs text-red-400 ml-1"
+                                            >
+                                                {error}
+                                            </motion.p>
+                                        )}
 
                         <button
                             type="submit"
