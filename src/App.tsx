@@ -7,22 +7,27 @@ import ProjectsPage from './pages/projectsPage'
 import AuthenticatedLayout from './components/layout/Layout'
 import { MOCK_PROJECTS } from './utils/MOCK_PROJECTS'
 import CodeEditorPage from './pages/CodeEditorPage'
+import CodeEditorLayout from './components/layout/CodeEditorLayout'
 
 function App() {
 
   return (
     <>
-    <BrowserRouter>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage/>} />
-          <Route path="/login" element={<LoginPage/>} />
-          <Route path="/signup" element={<RegisterPage/>} />
-          <Route path="/project" element={<AuthenticatedLayout projectData={MOCK_PROJECTS}>
-            <ProjectsPage/>
-          </AuthenticatedLayout>} />
-          <Route path="/code" element={<AuthenticatedLayout projectData={MOCK_PROJECTS}>
-            <CodeEditorPage/>
-          </AuthenticatedLayout>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
+          <Route path="/project" element={
+            <AuthenticatedLayout projectData={MOCK_PROJECTS}>
+              <ProjectsPage />
+            </AuthenticatedLayout>
+          } />
+          <Route path="/code" element={
+            <CodeEditorLayout projectData={[MOCK_PROJECTS[0]]}>
+              <CodeEditorPage />
+            </CodeEditorLayout>}
+          />
         </Routes>
       </BrowserRouter>
     </>

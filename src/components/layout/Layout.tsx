@@ -7,7 +7,7 @@ import type {
 import { TopNavbar } from "./TopNavbar";
 import { MultiProjectSidebar } from "./MultiProjectSidebar";
 
-interface AuthenticatedLayoutProps {
+export interface AuthenticatedLayoutProps {
   children: ReactNode;
   projectData?: ProjectDetailResponse[];
 
