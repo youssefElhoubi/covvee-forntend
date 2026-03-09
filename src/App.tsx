@@ -6,6 +6,7 @@ import { RegisterPage } from './pages/RegisterPage'
 import ProjectsPage from './pages/projectsPage'
 import AuthenticatedLayout from './components/layout/Layout'
 import { MOCK_PROJECTS } from './utils/MOCK_PROJECTS'
+import CodeEditorPage from './pages/CodeEditorPage'
 
 function App() {
 
@@ -16,9 +17,11 @@ function App() {
           <Route path="/" element={<LandingPage/>} />
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/signup" element={<RegisterPage/>} />
-          <Route path="/project" element={<ProjectsPage/>} />
-          <Route path="/demo" element={<AuthenticatedLayout projectData={MOCK_PROJECTS}>
+          <Route path="/project" element={<AuthenticatedLayout projectData={MOCK_PROJECTS}>
             <ProjectsPage/>
+          </AuthenticatedLayout>} />
+          <Route path="/code" element={<AuthenticatedLayout projectData={MOCK_PROJECTS}>
+            <CodeEditorPage/>
           </AuthenticatedLayout>} />
         </Routes>
       </BrowserRouter>
