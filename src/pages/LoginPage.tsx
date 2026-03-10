@@ -7,10 +7,12 @@ import { ArrowRight, Chrome, Code2, Github, Lock, Mail } from "lucide-react";
 import { InputField } from "../components/ui/formes/InputField";
 import { login } from "../services/AuthService";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 type LoginFormData = z.infer<typeof loginSchema>;
 export const LoginPage = () => {
+    const navigator = useNavigate();
     const {
         register,
         handleSubmit,
@@ -22,7 +24,9 @@ export const LoginPage = () => {
 
     const onSubmit = async (data: LoginFormData) => {
         try {
-            await login(data);
+            const result = await login(data);
+            localStorage.setItem("token", result.token);
+            navigator("/dashboard");
         } catch (error) {
             console.log(error);
             setError("Invalid email or password");

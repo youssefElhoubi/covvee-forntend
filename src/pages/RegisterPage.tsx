@@ -13,6 +13,9 @@ import {
 import { motion } from 'framer-motion';
 import { InputField } from '../components/ui/formes/InputField';
 import { registerSchema } from '../zod/registerSchema';
+import { signUp } from '../services/AuthService';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // --- Reusable UI Component: InputField ---
 
@@ -25,6 +28,12 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 
 export const RegisterPage = () => {
+    const navigator= useNavigate();
+
+
+    const [error, setError] = useState<string | null>(null)
+
+    // Initialize the form with react-hook-form and zod validation
     const {
         register,
         handleSubmit,
@@ -34,10 +43,15 @@ export const RegisterPage = () => {
     });
 
     const onSubmit = async (data: RegisterFormData) => {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("Register Data:", data);
-        alert("Account Created! (Check console)");
+        const { confirmPassword, ...requestData } = data
+        try {
+            const result = await signUp(requestData);
+            localStorage.setItem("token", result.token);
+            navigator("/dashboard");
+        } catch (error) {
+            setError("Failed to create account. Please try again.");
+            console.log(error);
+        }
     };
 
     return (
@@ -75,8 +89,8 @@ export const RegisterPage = () => {
                             type="text"
                             placeholder="John Doe"
                             icon={<User size={18} />}
-                            error={errors.fullName?.message}
-                            {...register("fullName")}
+                            error={errors.username?.message}
+                            {...register("username")}
                         />
 
                         <InputField
@@ -105,6 +119,13 @@ export const RegisterPage = () => {
                             error={errors.confirmPassword?.message}
                             {...register("confirmPassword")}
                         />
+                        <motion.p
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-xs text-red-400 ml-1"
+                        >
+                            {error}
+                        </motion.p>
 
                         <div className="flex items-start gap-2 text-sm">
                             <input
