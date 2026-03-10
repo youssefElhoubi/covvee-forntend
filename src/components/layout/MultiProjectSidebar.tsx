@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { cn } from "../../utils/cn";
-import type {  ProjectDetailResponse, SidebarMode } from "../../types/project.types";
+import type {  SidebarMode } from "../../types/project.types";
 import { ProjectSumary } from "../project/projectSumary";
+import { projectStore } from "../../store/ProjectStore";
+import { useEffect } from "react";
 
 const SIDEBAR_WIDTH: Record<SidebarMode, number> = {
     expanded: 280,
@@ -10,7 +12,7 @@ const SIDEBAR_WIDTH: Record<SidebarMode, number> = {
 };
 
 interface MultiProjectSidebarProps {
-    projects?: ProjectDetailResponse[];
+
     sidebarMode: SidebarMode;
 
     
@@ -18,10 +20,14 @@ interface MultiProjectSidebarProps {
 
 
 export function MultiProjectSidebar({
-    projects,
     sidebarMode,
-    
 }: MultiProjectSidebarProps) {
+        const projectData = projectStore((state) => state.projects);
+        const fetchProjects = projectStore((state) => state.fetchProjects);
+    
+        useEffect(() => {
+            fetchProjects();
+        }, []);
     const isCompact = sidebarMode === "compact";
 
     return (
@@ -44,15 +50,14 @@ export function MultiProjectSidebar({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2">
-                    {projects?.length === 0 ? (
+                    {projectData?.length === 0 ? (
                         <div className="p-4 text-center text-sm text-slate-500">No projects available</div>
                     ) : (
-                        projects?.map((project) => (
+                        projectData?.map((project) => (
                             <ProjectSumary
                                 key={project.id}
                                 project={project}
                                 compact={isCompact}
-
                             />
                         ))
                     )}

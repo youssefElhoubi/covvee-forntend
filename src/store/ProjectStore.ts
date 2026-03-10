@@ -6,6 +6,8 @@ type projectStore = {
     projects: ProjectDetailResponse[],
     isLoading: boolean,
     error: any,
+    fetchProjects : ()=> void,
+    deleteProject: (projectId: string)=> void
 }
 
 export const projectStore = create<projectStore>((set) => ({

@@ -5,8 +5,9 @@ import {
     LayoutGrid,
     List
 } from 'lucide-react';
-import { MOCK_PROJECTS } from '../utils/MOCK_PROJECTS';
 import { ProjectCard } from '../components/ui/Project/ProjectCard';
+import { useEffect } from 'react';
+import { projectStore } from '../store/ProjectStore';
 
 
 
@@ -25,6 +26,12 @@ const containerVariants = {
 
 
 export default function ProjectsPage() {
+    const projectData = projectStore((state) => state.projects);
+    const fetchProjects = projectStore((state) => state.fetchProjects);
+
+    useEffect(() => {
+        fetchProjects();
+    }, []);
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 p-6 md:p-12 font-sans selection:bg-emerald-500/30">
             {/* Background Ambience */}
@@ -82,7 +89,7 @@ export default function ProjectsPage() {
                         </button>
                     </div>
                     <div className="text-sm text-slate-500">
-                        Showing {MOCK_PROJECTS.length} projects
+                        Showing {projectData.length} projects
                     </div>
                 </motion.div>
 
@@ -93,7 +100,7 @@ export default function ProjectsPage() {
                     animate="visible"
                     className="grid grid-cols-1 lg:grid-cols-2 gap-8"
                 >
-                    {MOCK_PROJECTS.map((project) => (
+                    {projectData.map((project) => (
                         <ProjectCard key={project.id} project={project} />
                     ))}
                 </motion.div>

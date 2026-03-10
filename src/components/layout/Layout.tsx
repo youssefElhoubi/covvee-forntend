@@ -1,4 +1,4 @@
-import {  useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { GripVertical, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type {
   ProjectDetailResponse,
@@ -15,9 +15,8 @@ export interface AuthenticatedLayoutProps {
 
 export default function AuthenticatedLayout({
   children,
-  projectData,
 }: AuthenticatedLayoutProps) {
-  
+
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("expanded");
 
   const cycleSidebarMode = () => {
@@ -32,25 +31,13 @@ export default function AuthenticatedLayout({
     });
   };
 
-
-
-  if (projectData?.length === 0) {
-    return (
-      <div className="h-screen overflow-hidden bg-slate-950 text-slate-100 flex items-center justify-center">
-        <p className="text-slate-400">No project data available</p>
-      </div>
-    );
-  }
-
   return (
     <div className="h-screen overflow-hidden bg-slate-950 text-slate-100">
-      <TopNavbar/>
+      <TopNavbar />
 
       <div className="flex h-[calc(100vh-4rem)]">
         <MultiProjectSidebar
-          projects={projectData}
           sidebarMode={sidebarMode}
-          
         />
 
         <div className="flex min-w-0 flex-1 flex-col bg-[#0B1120]">

@@ -8,6 +8,7 @@ import AuthenticatedLayout from './components/layout/Layout'
 import { MOCK_PROJECTS } from './utils/MOCK_PROJECTS'
 import CodeEditorPage from './pages/CodeEditorPage'
 import CodeEditorLayout from './components/layout/CodeEditorLayout'
+import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
               <CodeEditorPage />
             </CodeEditorLayout>}
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </>
