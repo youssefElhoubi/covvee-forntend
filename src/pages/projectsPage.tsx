@@ -6,8 +6,9 @@ import {
     List
 } from 'lucide-react';
 import { ProjectCard } from '../components/ui/Project/ProjectCard';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { projectStore } from '../store/ProjectStore';
+import { CreateProjectModal } from '../components/project/CreateProjectModal';
 
 
 
@@ -26,6 +27,7 @@ const containerVariants = {
 
 
 export default function ProjectsPage() {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const projectData = projectStore((state) => state.projects);
     const fetchProjects = projectStore((state) => state.fetchProjects);
 
@@ -66,7 +68,11 @@ export default function ProjectsPage() {
                                 className="bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 w-full md:w-64 transition-all"
                             />
                         </div>
-                        <button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-500/20">
+                        <button
+                            type="button"
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-emerald-500/20"
+                        >
                             <Plus size={18} />
                             <span className="hidden sm:inline">New Project</span>
                         </button>
@@ -104,6 +110,12 @@ export default function ProjectsPage() {
                         <ProjectCard key={project.id} project={project} />
                     ))}
                 </motion.div>
+
+                <CreateProjectModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onCreated={fetchProjects}
+                />
             </div>
         </div>
     );
