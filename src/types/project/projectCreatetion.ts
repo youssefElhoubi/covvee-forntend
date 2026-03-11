@@ -5,7 +5,7 @@ type Language = 'PYTHON' | 'JAVA' | 'JAVASCRIPT';
 
 export type CreateProjectRequest ={
     name ?:string 
-    Language:Language
-    Visibility:Visibility
+    language:Language
+    visibility:Visibility
     description?:string
 }

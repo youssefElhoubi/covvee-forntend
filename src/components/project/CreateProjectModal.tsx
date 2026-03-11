@@ -34,15 +34,18 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
     });
 
     const onSubmit = async (values: CreateProjectFormValues) => {
+        console.log(values);
         try {
             setSubmitError("");
 
-            await createProject({
+            const response = await createProject({
                 name: values.name,
                 description: values.description || undefined,
-                Visibility: values.visibility,
-                Language: values.language,
+                visibility: values.visibility,
+                language: values.language,
             });
+            console.log(response);
+
 
             reset();
             onClose();
