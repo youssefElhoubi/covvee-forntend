@@ -61,3 +61,22 @@ export const createProject = async (CreateProjectRequest:CreateProjectRequest) =
         throw error;
     }
 }
+export const getproject = async (id:string)=>{
+    try {
+        const token: string = localStorage.getItem("token") || "";
+        const response = await fetch(`${url}/api/project${id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw errorData;
+        }
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}

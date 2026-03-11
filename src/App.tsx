@@ -20,7 +20,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/dashboard" element={
-            <AuthenticatedLayout projectData={MOCK_PROJECTS}>
+            <AuthenticatedLayout >
               <ProjectsPage />
             </AuthenticatedLayout>
           } />
