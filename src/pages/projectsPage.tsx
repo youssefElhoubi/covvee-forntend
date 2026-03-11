@@ -33,7 +33,7 @@ export default function ProjectsPage() {
 
     useEffect(() => {
         fetchProjects();
-    }, []);
+    }, [fetchProjects]);
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 p-6 md:p-12 font-sans selection:bg-emerald-500/30">
             {/* Background Ambience */}
