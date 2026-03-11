@@ -4,6 +4,9 @@ import { cn } from "../../utils/cn";
 import type { FileResponse, ProjectDetailResponse, SidebarMode } from "../../types/project.types";
 
 import { ComplateProject } from "../project/complateProject";
+import { projectStore } from "../../store/ProjectStore";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const SIDEBAR_WIDTH: Record<SidebarMode, number> = {
     expanded: 280,
@@ -21,12 +24,21 @@ interface MultiProjectSidebarProps {
 
 
 export function SingleProjectSidebar({
-    projects,
     sidebarMode,
     selectedFileId,
     onSelectFile,
     onToggleSidebar,
 }: MultiProjectSidebarProps) {
+
+    const project  = projectStore((state) => state.project);
+    const getproject = projectStore((state) => state.getproject);
+    const { id } = useParams<{ id: string }>();
+    useEffect(() => {
+            if (id) {
+                getproject(id);
+            }
+        }, [getproject, id]);
+
     const isCompact = sidebarMode === "compact";
 
     return (
@@ -58,18 +70,15 @@ export function SingleProjectSidebar({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2">
-                    {projects?.length === 0 ? (
+                    {project === null ? (
                         <div className="p-4 text-center text-sm text-slate-500">No projects available</div>
                     ) : (
-                        projects?.map((project) => (
                             <ComplateProject
-                                key={project.id}
                                 project={project}
                                 compact={isCompact}
                                 selectedFileId={selectedFileId}
                                 onSelectFile={onSelectFile}
                             />
-                        ))
                     )}
                 </div>
             </div>

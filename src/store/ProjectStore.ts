@@ -1,16 +1,19 @@
 import { create } from "zustand";
 import type { ProjectDetailResponse } from "../types/ProjectDetailResponse";
-import { deleteProjectService, getProjects } from "../services/ProjectService";
+import { deleteProjectService, getproject, getProjects } from "../services/ProjectService";
 
 type projectStore = {
+    project: ProjectDetailResponse | null,
     projects: ProjectDetailResponse[],
     isLoading: boolean,
     error: any,
-    fetchProjects : ()=> void,
-    deleteProject: (projectId: string)=> void
+    fetchProjects: () => void,
+    deleteProject: (projectId: string) => void
+    getproject: (Id: string) => void
 }
 
 export const projectStore = create<projectStore>((set) => ({
+    project: null,
     projects: [],
     isLoading: false,
     error: null,
@@ -36,6 +39,14 @@ export const projectStore = create<projectStore>((set) => ({
         } catch (error) {
             set({ error, isLoading: false })
         }
-
+    },
+    getproject: async (id: string) => {
+        set({ isLoading: true, error: null })
+        try {
+            const project = await getproject(id);
+            set({ project, error: null, isLoading: false })
+        } catch (error) {
+            set({ error, isLoading: false })
+        }
     }
 }))
