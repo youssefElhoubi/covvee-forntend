@@ -6,7 +6,7 @@ export const getProjects = async () => {
     try {
         const token: string = localStorage.getItem("token") || "";
         const response = await fetch(`${url}/api/project/my-projects`, {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${token}`
@@ -25,7 +25,7 @@ export const deleteProjectService = async (projectId: string) => {
     try {
         const token: string = localStorage.getItem("token") || "";
         const response = await fetch(`${url}/api/project${projectId}`, {
-            method: "POST",
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${token}`
@@ -65,7 +65,7 @@ export const getproject = async (id:string)=>{
     try {
         const token: string = localStorage.getItem("token") || "";
         const response = await fetch(`${url}/api/project${id}`, {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${token}`

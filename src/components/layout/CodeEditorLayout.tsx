@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { AuthenticatedLayoutProps } from './Layout';
 import type { SidebarMode } from '../../types/project.types';
 import { TopNavbar } from './TopNavbar';
 import { GripVertical, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { SingleProjectSidebar } from './SingleProjectSidebar';
+import { projectStore } from '../../store/ProjectStore';
 
 const CodeEditorLayout: React.FC<AuthenticatedLayoutProps> = ({
     children,
-    projectData,
 }) => {
+
+    const projectData = projectStore((state) => state.projects);
+    const fetchProjects = projectStore((state) => state.fetchProjects);
+
+    useEffect(() => {
+        fetchProjects();
+    }, []);
 
     const [sidebarMode, setSidebarMode] = useState<SidebarMode>("expanded");
 
@@ -40,8 +47,8 @@ const CodeEditorLayout: React.FC<AuthenticatedLayoutProps> = ({
 
             <div className="flex h-[calc(100vh-4rem)]">
                 <SingleProjectSidebar
-                    onSelectFile={()=>{}}
-                    onToggleSidebar={()=>{}}
+                    onSelectFile={() => { }}
+                    onToggleSidebar={() => { }}
                     selectedFileId={""}
                     projects={projectData}
                     sidebarMode={sidebarMode}

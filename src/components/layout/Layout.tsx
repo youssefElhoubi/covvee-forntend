@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { GripVertical, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type {
-  ProjectDetailResponse,
   SidebarMode,
 } from "../../types/project.types";
 import { TopNavbar } from "./TopNavbar";
@@ -9,8 +8,6 @@ import { MultiProjectSidebar } from "./MultiProjectSidebar";
 
 export interface AuthenticatedLayoutProps {
   children: ReactNode;
-  projectData?: ProjectDetailResponse[];
-
 }
 
 export default function AuthenticatedLayout({

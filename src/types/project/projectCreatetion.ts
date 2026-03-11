@@ -1,6 +1,6 @@
 type Visibility = 'PUBLIC' | 'PRIVATE';
 
-type Language = 'PYTHON' | 'JAVA' | 'JS';
+type Language = 'PYTHON' | 'JAVA' | 'JAVASCRIPT';
 
 
 export type CreateProjectRequest ={

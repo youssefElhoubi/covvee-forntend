@@ -153,7 +153,7 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
                             >
                                 <option value="PYTHON">PYTHON</option>
                                 <option value="JAVA">JAVA</option>
-                                <option value="JS">JS</option>
+                                <option value="JAVASCRIPT">JAVASCRIPT</option>
                             </select>
                             {errors.language && (
                                 <p className="mt-1 text-xs text-red-400">{errors.language.message}</p>

@@ -5,7 +5,6 @@ import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import ProjectsPage from './pages/projectsPage'
 import AuthenticatedLayout from './components/layout/Layout'
-import { MOCK_PROJECTS } from './utils/MOCK_PROJECTS'
 import CodeEditorPage from './pages/CodeEditorPage'
 import CodeEditorLayout from './components/layout/CodeEditorLayout'
 import NotFoundPage from './pages/NotFoundPage'
@@ -25,7 +24,7 @@ function App() {
             </AuthenticatedLayout>
           } />
           <Route path="/code" element={
-            <CodeEditorLayout projectData={[MOCK_PROJECTS[0]]}>
+            <CodeEditorLayout>
               <CodeEditorPage />
             </CodeEditorLayout>}
           />

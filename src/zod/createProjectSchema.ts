@@ -17,7 +17,7 @@ export const createProjectSchema = z.object({
         }),
     language: z
         .string()
-        .refine((value) => value === "PYTHON" || value === "JAVA" || value === "JS", {
+        .refine((value) => value === "PYTHON" || value === "JAVA" || value === "JAVASCRIPT", {
             message: "Language is required",
         }),
 });

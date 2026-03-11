@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { cn } from "../../../utils/cn";
 import { Code2, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
+    const navigator = useNavigate()
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -50,7 +52,9 @@ export const Navbar = () => {
 
                 {/* CTA */}
                 <div className="hidden md:flex items-center gap-4">
-                    <button className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                    <button onClick={()=>{
+                        navigator("/login")
+                    }} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                         Log in
                     </button>
                     <button className="bg-white text-slate-950 px-5 py-2 rounded-full text-sm font-bold hover:bg-emerald-400 transition-colors">

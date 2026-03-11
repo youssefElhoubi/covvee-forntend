@@ -17,7 +17,7 @@ export function CodeEditorWorkspace() {
             </div>
 
             {/* Main Content - Two Column Layout */}
-            <div className="h-[calc(100vh-4rem)] flex">
+            <div className="h-[calc(100vh-4rem)] flex flex-col">
                 {/* Left: Editor */}
                 <div className="flex-1 border-r border-slate-800">
                     <EditorPane
