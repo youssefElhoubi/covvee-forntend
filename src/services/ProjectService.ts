@@ -64,7 +64,7 @@ export const createProject = async (CreateProjectRequest:CreateProjectRequest) =
 export const getproject = async (id:string)=>{
     try {
         const token: string = localStorage.getItem("token") || "";
-        const response = await fetch(`${url}/api/project${id}`, {
+        const response = await fetch(`${url}/api/project/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
