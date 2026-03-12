@@ -1,11 +1,18 @@
+import type { MouseEvent } from "react";
 import type { FileResponse, ProjectDetailResponse } from "../../types/project.types";
 import { FolderNode } from "./FolderNode";
 import { FileNode } from "./FileNode";
+import type { FolderResponse } from "../../types/project.types";
 
 interface FileTreeProps {
   projectData: ProjectDetailResponse;
   compact: boolean;
   onSelectFile: (file: FileResponse, path: string[]) => void;
+  onFolderContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folder: FolderResponse,
+    path: string[]
+  ) => void;
   selectedFileId: string | null;
 }
 
@@ -13,6 +20,7 @@ export function FileTree({
   projectData,
   compact,
   onSelectFile,
+  onFolderContextMenu,
   selectedFileId,
 }: FileTreeProps) {
   return (
@@ -23,7 +31,9 @@ export function FileTree({
           folder={folder}
           depth={0}
           compact={compact}
+          folderPath={[]}
           onSelectFile={onSelectFile}
+          onFolderContextMenu={onFolderContextMenu}
           onFolderToggle={() => undefined}
           selectedFileId={selectedFileId}
         />

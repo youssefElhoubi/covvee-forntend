@@ -5,9 +5,9 @@ import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import ProjectsPage from './pages/projectsPage'
 import AuthenticatedLayout from './components/layout/Layout'
-import { MOCK_PROJECTS } from './utils/MOCK_PROJECTS'
 import CodeEditorPage from './pages/CodeEditorPage'
 import CodeEditorLayout from './components/layout/CodeEditorLayout'
+import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
 
@@ -19,15 +19,16 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/dashboard" element={
-            <AuthenticatedLayout projectData={MOCK_PROJECTS}>
+            <AuthenticatedLayout >
               <ProjectsPage />
             </AuthenticatedLayout>
           } />
-          <Route path="/code" element={
-            <CodeEditorLayout projectData={[MOCK_PROJECTS[0]]}>
+          <Route path="/code/:id" element={
+            <CodeEditorLayout>
               <CodeEditorPage />
             </CodeEditorLayout>}
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </>

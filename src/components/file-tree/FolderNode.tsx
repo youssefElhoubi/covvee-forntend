@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ChevronDown, ChevronRight, Folder, FolderOpen } from "lucide-react";
 import { cn } from "../../utils/cn";
@@ -23,7 +23,13 @@ interface FolderNodeProps {
   folder: FolderResponse;
   depth: number;
   compact: boolean;
+  folderPath: string[];
   onSelectFile: (file: FileResponse, folderPath: string[]) => void;
+  onFolderContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folder: FolderResponse,
+    path: string[]
+  ) => void;
   onFolderToggle: (folderId: string, isOpen: boolean) => void;
   selectedFileId: string | null;
 }
@@ -32,7 +38,9 @@ export function FolderNode({
   folder,
   depth,
   compact,
+  folderPath,
   onSelectFile,
+  onFolderContextMenu,
   onFolderToggle,
   selectedFileId,
 }: FolderNodeProps) {
@@ -45,12 +53,19 @@ export function FolderNode({
   };
 
   const hasChildren = folder.children.length > 0 || folder.files.length > 0;
+  const currentFolderPath = [...folderPath, folder.name];
+
+  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onFolderContextMenu(event, folder, currentFolderPath);
+  };
 
   return (
     <div>
       <button
         type="button"
         onClick={handleToggle}
+        onContextMenu={handleContextMenu}
         title={compact ? folder.name : undefined}
         className={cn(
           "group flex w-full items-center rounded-md py-1.5 text-left text-sm transition-colors",
@@ -94,7 +109,9 @@ export function FolderNode({
                   folder={child}
                   depth={depth + 1}
                   compact={compact}
-                  onSelectFile={(file, path) => onSelectFile(file, [folder.name, ...path])}
+                  folderPath={currentFolderPath}
+                  onSelectFile={onSelectFile}
+                  onFolderContextMenu={onFolderContextMenu}
                   onFolderToggle={onFolderToggle}
                   selectedFileId={selectedFileId}
                 />
@@ -104,7 +121,7 @@ export function FolderNode({
                   key={file.id}
                   file={file}
                   depth={depth + 1}
-                  onSelect={() => onSelectFile(file, [folder.name])}
+                  onSelect={() => onSelectFile(file, currentFolderPath)}
                   isCompact={compact}
                   isSelected={selectedFileId === file.id}
                 />

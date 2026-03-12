@@ -43,8 +43,8 @@ export function ComplateProject({
                     <Code2 className="h-3.5 w-3.5 text-emerald-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-semibold text-slate-100">{project.name}</div>
-                    <div className="text-xs text-slate-500">{project.language}</div>
+                    <div className="truncate text-sm font-semibold text-slate-100">{project?.name}</div>
+                    <div className="text-xs text-slate-500">{project?.language}</div>
                 </div>
             </button>
 
