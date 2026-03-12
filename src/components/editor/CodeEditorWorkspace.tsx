@@ -9,6 +9,7 @@ import { OutputPanel } from "./OutputPanel";
 
 export function CodeEditorWorkspace() {
     const { id } = useParams<{ id: string }>();
+    // stores and actions
     const project = projectStore((state) => state.project);
     const isLoading = projectStore((state) => state.isLoading);
     const getproject = projectStore((state) => state.getproject);

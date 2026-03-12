@@ -17,7 +17,6 @@ type EditorTabsState = {
     updateFileContent: (fileId: string, content: string) => void;
     reset: () => void;
 };
-// to be explained 
 
 function buildWorkspaceFile(file: FileResponse, path: string[]): EditorWorkspaceFile {
     return {
@@ -115,7 +114,7 @@ export const editorTabsStore = create<EditorTabsState>((set) => ({
                 activeFile,
             };
         }),
-
+        
     reset: () =>
         set({
             fileSystem: [],
