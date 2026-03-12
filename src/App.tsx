@@ -23,7 +23,7 @@ function App() {
               <ProjectsPage />
             </AuthenticatedLayout>
           } />
-          <Route path="/code" element={
+          <Route path="/code/:id" element={
             <CodeEditorLayout>
               <CodeEditorPage />
             </CodeEditorLayout>}
