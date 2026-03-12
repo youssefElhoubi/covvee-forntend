@@ -1,33 +1,66 @@
-import { useState } from "react";
-import { EditorPane } from "./EditorPane";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { projectStore } from "../../store/ProjectStore";
+import { editorTabsStore } from "../../store/editorTabsStore";
+import { FileExplorer } from "./FileExplorer";
+import { TabBar } from "./TabBar";
+import { EditorContainer } from "./EditorContainer";
 import { OutputPanel } from "./OutputPanel";
 
-
-
 export function CodeEditorWorkspace() {
-    const [userCode, setUserCode] = useState<string>("");
+    const { id } = useParams<{ id: string }>();
+    const project = projectStore((state) => state.project);
+    const isLoading = projectStore((state) => state.isLoading);
+    const getproject = projectStore((state) => state.getproject);
+    const activeFile = editorTabsStore((state) => state.activeFile);
+    const initializeFileSystem = editorTabsStore((state) => state.initializeFileSystem);
+    const updateFileContent = editorTabsStore((state) => state.updateFileContent);
+    const resetEditor = editorTabsStore((state) => state.reset);
+
+    useEffect(() => {
+        if (id) {
+            getproject(id);
+        }
+    }, [getproject, id]);
+
+    useEffect(() => {
+        if (project) {
+            initializeFileSystem(project);
+            return;
+        }
+
+        resetEditor();
+    }, [initializeFileSystem, project, resetEditor]);
+
+    if (isLoading && !project) {
+        return (
+            <div className="flex h-full items-center justify-center bg-slate-950 text-slate-400">
+                Loading project workspace...
+            </div>
+        );
+    }
+
+    if (!project) {
+        return (
+            <div className="flex h-full items-center justify-center bg-slate-950 text-slate-400">
+                Project not found.
+            </div>
+        );
+    }
 
     return (
-        <div className="h-screen bg-slate-950 text-slate-100">
-            {/* Header */}
-            <div className="h-16 border-b border-slate-800 flex items-center px-6">
-                <h1 className="text-2xl font-bold text-emerald-400">
-                    Code Editor Workspace
-                </h1>
-            </div>
+        <div className="flex h-full min-h-0 bg-slate-950 text-slate-100">
+            <FileExplorer project={project} />
 
-            {/* Main Content - Two Column Layout */}
-            <div className="h-[calc(100vh-4rem)] flex flex-col">
-                {/* Left: Editor */}
-                <div className="flex-1 border-r border-slate-800">
-                    <EditorPane
-                        userCode={userCode}
-                        onChange={(value) => setUserCode(value || "")}
-                    />
-                </div>
+            <div className="grid min-w-0 flex-1 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_24rem]">
+                <section className="flex min-h-0 min-w-0 flex-col border-r border-slate-800">
+                    <TabBar />
+                    <div className="min-h-0 flex-1">
+                        <EditorContainer activeFile={activeFile} onChangeContent={updateFileContent} />
+                    </div>
+                </section>
 
-                {/* Right: Output */}
-                <div className="w-[40%] min-w-100 max-w-150">
+                <div className="min-h-0">
                     <OutputPanel />
                 </div>
             </div>
