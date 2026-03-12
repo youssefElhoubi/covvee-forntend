@@ -4,6 +4,7 @@ import { ChevronRight, Clock, Code2, FileCode, MoreVertical } from "lucide-react
 import { LanguageBadge } from "./LanguageBadge";
 import type { FileResponse } from "../../../types/FileResponse";
 import { RecursiveFolder } from "./RecursiveFolder";
+import { useNavigate } from 'react-router-dom';
 
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -32,6 +33,7 @@ const FileItem = ({ file }: { file: FileResponse }) => (
 );
 
 export function ProjectCard({ project }: { project: ProjectDetailResponse }) {
+    const navigate = useNavigate();
     return (
         <motion.div
             variants={itemVariants}
@@ -86,7 +88,10 @@ export function ProjectCard({ project }: { project: ProjectDetailResponse }) {
                     <Clock size={14} />
                     <span>Updated just now</span>
                 </div>
-                <button className="text-sm font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors group/btn">
+                <button
+                    onClick={() => navigate(`/code/${project.id}`)}
+                    className="text-sm font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors group/btn"
+                >
                     Open Editor
                     <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
