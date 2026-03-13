@@ -23,7 +23,7 @@ interface FileState {
     subscribeToFileDelete: (fileId: string) => void;
     subscribeToFileMove: (fileId: string) => void;
     unsubscribeAll: () => void;
-    unsubscribeFromEvent: (subscriptionKey: string) =>void;
+    unsubscribeFromEvent: (subscriptionKey: string) => void;
 }
 
 export const useFileStore = create<FileState>((set, get) => ({
@@ -36,37 +36,56 @@ export const useFileStore = create<FileState>((set, get) => ({
             stompClient.publish({ destination: `/app/file/request/${fileId}` });
         }
     }
-    , 
+    ,
     updateFile: (fileId: string, content: string) => {
+        const userToken = localStorage.getItem("token");
         const { stompClient } = useWebSocketStore.getState();
         if (stompClient?.connected) {
             stompClient.publish({
                 destination: `/app/file/update/${fileId}`,
                 body: JSON.stringify(content),
+                headers: {
+                    Authorization: `Bearer ${userToken}`
+                }
+
             });
         }
     },
     renameFile: (fileId: string, content: string) => {
+        const userToken = localStorage.getItem("token");
         const { stompClient } = useWebSocketStore.getState();
         if (stompClient?.connected) {
             stompClient.publish({
                 destination: `/app/file/rename/${fileId}`,
                 body: JSON.stringify(content),
+                headers: {
+                    Authorization: `Bearer ${userToken}`
+                }
             });
         }
     },
     deleteFile: (fileId: string) => {
         const { stompClient } = useWebSocketStore.getState();
+        const userToken = localStorage.getItem("token");
         if (stompClient?.connected) {
-            stompClient.publish({ destination: `/app/file/delete/${fileId}` });
+            stompClient.publish({
+                destination: `/app/file/delete/${fileId}`,
+                headers: {
+                    Authorization: `Bearer ${userToken}`
+                }
+            });
         }
     },
     moveFile: (fileId: string, newParentFolderId: string) => {
         const { stompClient } = useWebSocketStore.getState();
+        const userToken = localStorage.getItem("token");
         if (stompClient?.connected) {
             stompClient.publish({
                 destination: `/app/file/move/${fileId}`,
                 body: newParentFolderId, // Passed as a raw string to match Java @Payload String
+                headers: {
+                    Authorization: `Bearer ${userToken}`
+                }
             });
         }
     },
@@ -163,7 +182,7 @@ export const useFileStore = create<FileState>((set, get) => ({
         subs.set(subKey, moveSub);
         set({ subscriptions: subs });
     },
-    
+
 
 
     // CLEANUP: Kill all subscriptions to prevent memory leaks and duplicate renders
@@ -175,7 +194,7 @@ export const useFileStore = create<FileState>((set, get) => ({
     unsubscribeFromEvent: (subscriptionKey: string) => {
         const subs = new Map(get().subscriptions);
         const sub = subs.get(subscriptionKey);
-        
+
         if (sub) {
             sub.unsubscribe();
             subs.delete(subscriptionKey);
