@@ -38,7 +38,17 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
 
-            // frame is strictly typed to the STOMP Frame object
+            // 1. THE DEBUG HOOK: This will print every single background step to the console
+            debug: (str) => {
+                console.log('STOMP DEBUG:', str);
+            },
+
+            // 2. THE TRANSPORT ERROR HOOK: This catches network/CORS/HTTP blocks
+            onWebSocketError: (event) => {
+                console.error('WebSocket/Transport Error. The connection was blocked before STOMP could start.');
+                console.error('Event details:', event);
+            },
+
             onConnect: () => {
                 console.log('Successfully connected to STOMP broker.');
                 set({ isConnected: true }); 
@@ -50,11 +60,13 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             },
 
             onStompError: (frame: Frame) => {
-                console.error('STOMP Error:', frame.headers['message']);
+                console.error('STOMP Protocol Error:', frame.headers['message']);
             }
         });
-
         client.activate();
+        console.log(get().isConnected);
+        
+
         
         set({ stompClient: client });
     },
