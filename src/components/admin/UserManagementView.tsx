@@ -4,8 +4,14 @@ import UsersPagination from "./user-management/UsersPagination";
 import UsersTable from "./user-management/UsersTable";
 import { mockUsersPage, PAGE_SIZE } from "./user-management/mockData";
 import type { PaginatedUsersDto } from "./user-management/types";
+import { useQuery } from "@tanstack/react-query";
+import { getUsers } from "../../services/adminService";
 
 export default function UserManagementView() {
+  const {data} = useQuery({
+    queryKey: ["admin", "users"],
+    queryFn: () => getUsers()
+  });
   const [usersPage, setUsersPage] = useState<PaginatedUsersDto>(mockUsersPage);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,7 +93,7 @@ export default function UserManagementView() {
       />
 
       <UsersTable
-        users={pagedUsers}
+        users={data ? data.content : pagedUsers}
         expandedUserId={expandedUserId}
         onToggleExpand={(userId) => setExpandedUserId((current) => (current === userId ? null : userId))}
         onToggleBan={handleToggleBan}
@@ -96,8 +102,8 @@ export default function UserManagementView() {
 
       <UsersPagination
         currentPage={currentPage}
-        totalVisiblePages={totalVisiblePages}
-        totalApiPages={usersPage.totalPages}
+        totalVisiblePages={data?.totalPages ?? totalVisiblePages}
+        totalApiPages={data?.totalPages ?? usersPage.totalPages}
         onPrev={handlePrevPage}
         onNext={handleNextPage}
       />

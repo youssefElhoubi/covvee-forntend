@@ -33,6 +33,32 @@ export interface PaginatedResponse<T> {
     totalElements: number;
     last: boolean;
     first: boolean;
+    empty: boolean
+    number: number
+    numberOfElements: number
+    pageable: Pageable
+    size: number
+    sort: Sort2
+}
+export interface Pageable {
+    offset: number
+    pageNumber: number
+    pageSize: number
+    paged: boolean
+    sort: Sort
+    unpaged: boolean
+}
+
+export interface Sort {
+    empty: boolean
+    sorted: boolean
+    unsorted: boolean
+}
+
+export interface Sort2 {
+    empty: boolean
+    sorted: boolean
+    unsorted: boolean
 }
 
 export interface AuditLog {

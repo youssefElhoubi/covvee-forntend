@@ -5,8 +5,8 @@ import type {
     LanguageStat,
     PaginatedResponse,
     SystemHealth,
-    User,
 } from "../types/admin.types";
+import type { AdminUserDto } from "../components/admin/user-management/types";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -37,8 +37,8 @@ export const getLanguageStats = async (): Promise<LanguageStat[]> => {
 
 export const getUsers = async (
     params: GetUsersParams = {}
-): Promise<PaginatedResponse<User>> => {
-    const { data } = await adminClient.get<PaginatedResponse<User>>(
+): Promise<PaginatedResponse<AdminUserDto>> => {
+    const { data } = await adminClient.get<PaginatedResponse<AdminUserDto>>(
         "/api/admin/users",
         {
             params,
