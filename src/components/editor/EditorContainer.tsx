@@ -3,19 +3,20 @@ import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditor } from "monaco-editor";
 import type { EditorWorkspaceFile } from "../../store/editorTabsStore";
 import { inferMonacoLanguage } from "../../utils/inferMonacoLanguage";
+import { useFileStore } from "../../store/useFileStore";
 
 type EditorInstance = Parameters<OnMount>[0];
 type MonacoInstance = Parameters<OnMount>[1];
 
 interface EditorContainerProps {
     activeFile: EditorWorkspaceFile | null;
-    onChangeContent: (fileId: string, content: string) => void;
 }
 
 
 
-export function EditorContainer({ activeFile, onChangeContent }: EditorContainerProps) {
-    
+export function EditorContainer({ activeFile }: EditorContainerProps) {
+    const {subscribeToFileContent,requestFile,updateFile} = useFileStore();
+    // monaco editor instance and related refs
     const editorRef = useRef<EditorInstance | null>(null);
     const monacoRef = useRef<MonacoInstance | null>(null);
     const modelsRef = useRef(new Map<string, MonacoEditor.ITextModel>());
@@ -98,6 +99,8 @@ export function EditorContainer({ activeFile, onChangeContent }: EditorContainer
     }, [activeFile]);
 
     useEffect(() => {
+        subscribeToFileContent(activeFile?.id ?? "");
+        requestFile(activeFile?.id ?? "");
         return () => {
             modelsRef.current.forEach((model) => model.dispose());
             modelsRef.current.clear();
@@ -120,7 +123,7 @@ export function EditorContainer({ activeFile, onChangeContent }: EditorContainer
                 defaultLanguage={inferMonacoLanguage(activeFile)}
                 theme="vs-dark"
                 onMount={handleEditorMount}
-                onChange={(value) => onChangeContent(activeFile.id, value ?? "")}
+                onChange={(value) => updateFile(activeFile.id, value ?? "")}
                 options={{
                     fontSize: 14,
                     minimap: { enabled: false },

@@ -14,8 +14,7 @@ type EditorTabsState = {
     openFile: (file: EditorWorkspaceFile) => void;
     setActiveFile: (fileId: string) => void;
     closeFile: (fileId: string) => void;
-    updateFileContent: (fileId: string, content: string) => void;
-    reset: () => void;
+
 };
 
 function buildWorkspaceFile(file: FileResponse, path: string[]): EditorWorkspaceFile {
@@ -96,29 +95,5 @@ export const editorTabsStore = create<EditorTabsState>((set) => ({
                 openFiles: nextOpenFiles,
                 activeFile: nextActiveFile,
             };
-        }),
-        // te be edited
-    updateFileContent: (fileId, content) =>
-        set((state) => {
-            const updateFile = (file: EditorWorkspaceFile) =>
-                file.id === fileId ? { ...file, content } : file;
-
-            const fileSystem = state.fileSystem.map(updateFile);
-            const openFiles = state.openFiles.map(updateFile);
-            const activeFile =
-                state.activeFile?.id === fileId ? { ...state.activeFile, content } : state.activeFile;
-
-            return {
-                fileSystem,
-                openFiles,
-                activeFile,
-            };
-        }),
-        
-    reset: () =>
-        set({
-            fileSystem: [],
-            openFiles: [],
-            activeFile: null,
         }),
 }));

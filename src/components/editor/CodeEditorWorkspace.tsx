@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { projectStore } from "../../store/ProjectStore";
 import { editorTabsStore } from "../../store/editorTabsStore";
@@ -17,8 +17,7 @@ export function CodeEditorWorkspace() {
     const getproject = projectStore((state) => state.getproject);
     const activeFile = editorTabsStore((state) => state.activeFile);
     const initializeFileSystem = editorTabsStore((state) => state.initializeFileSystem);
-    const updateFileContent = editorTabsStore((state) => state.updateFileContent);
-    const resetEditor = editorTabsStore((state) => state.reset);
+
     // web socket and file actions
     const connectSocket = useWebSocketStore((state) => state.connect);
     const disconnectSocket = useWebSocketStore((state) => state.disconnect);
@@ -26,10 +25,8 @@ export function CodeEditorWorkspace() {
 
     // file store actions
     const requestFile = useFileStore((state) => state.requestFile);
-    const publishFileUpdate = useFileStore((state) => state.updateFile);
     const subscribeToFileContent = useFileStore((state) => state.subscribeToFileContent);
     const unsubscribeAllFileEvents = useFileStore((state) => state.unsubscribeAll);
-    const remoteActiveFile = useFileStore((state) => state.activeFile);
 
     useEffect(() => {
         if (id) {
@@ -58,8 +55,7 @@ export function CodeEditorWorkspace() {
             return;
         }
 
-        resetEditor();
-    }, [initializeFileSystem, project, resetEditor]);
+    }, [initializeFileSystem, project]);
 
     useEffect(() => {
         if (!isSocketConnected || !activeFile) {
@@ -69,22 +65,6 @@ export function CodeEditorWorkspace() {
         subscribeToFileContent(activeFile.id);
         requestFile(activeFile.id);
     }, [activeFile, isSocketConnected, requestFile, subscribeToFileContent]);
-
-    useEffect(() => {
-        if (!remoteActiveFile) {
-            return;
-        }
-
-        updateFileContent(remoteActiveFile.id, remoteActiveFile.content);
-    }, [remoteActiveFile, updateFileContent]);
-
-    const handleEditorContentChange = useCallback(
-        (fileId: string, content: string) => {
-            updateFileContent(fileId, content);
-            publishFileUpdate(fileId, content);
-        },
-        [publishFileUpdate, updateFileContent]
-    );
 
     if (isLoading && !project) {
         return (
@@ -110,7 +90,7 @@ export function CodeEditorWorkspace() {
                 <section className="flex min-h-0 min-w-0 flex-col border-r border-slate-800">
                     <TabBar />
                     <div className="min-h-0 flex-1">
-                        <EditorContainer activeFile={activeFile} onChangeContent={handleEditorContentChange} />
+                        <EditorContainer activeFile={activeFile} />
                     </div>
                 </section>
 
