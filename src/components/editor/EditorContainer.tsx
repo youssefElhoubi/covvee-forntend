@@ -1,9 +1,8 @@
 import { useEffect, useRef } from "react";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditor } from "monaco-editor";
-import type { EditorWorkspaceFile } from "../../store/editorTabsStore";
 import { inferMonacoLanguage } from "../../utils/inferMonacoLanguage";
-import { useFileStore } from "../../store/useFileStore";
+import { type EditorWorkspaceFile, useEditorStore } from "../../store/useEditorStore";
 
 type EditorInstance = Parameters<OnMount>[0];
 type MonacoInstance = Parameters<OnMount>[1];
@@ -15,13 +14,14 @@ interface EditorContainerProps {
 
 
 export function EditorContainer({ activeFile }: EditorContainerProps) {
-    const {subscribeToFileContent,requestFile,updateFile} = useFileStore();
+    const updateFile = useEditorStore((state) => state.updateFile);
     // monaco editor instance and related refs
     const editorRef = useRef<EditorInstance | null>(null);
     const monacoRef = useRef<MonacoInstance | null>(null);
     const modelsRef = useRef(new Map<string, MonacoEditor.ITextModel>());
     const viewStatesRef = useRef(new Map<string, MonacoEditor.ICodeEditorViewState | null>());
     const previousFileIdRef = useRef<string | null>(null);
+    const debounceTimerRef = useRef<number | null>(null);
 
     const getOrCreateModel = (file: EditorWorkspaceFile) => {
         const monaco = monacoRef.current;
@@ -99,14 +99,33 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
     }, [activeFile]);
 
     useEffect(() => {
-        subscribeToFileContent(activeFile?.id ?? "");
-        requestFile(activeFile?.id ?? "");
         return () => {
+            if (debounceTimerRef.current !== null) {
+                window.clearTimeout(debounceTimerRef.current);
+                debounceTimerRef.current = null;
+            }
+
             modelsRef.current.forEach((model) => model.dispose());
             modelsRef.current.clear();
             viewStatesRef.current.clear();
         };
     }, []);
+
+    const handleEditorChange = (value?: string) => {
+        if (!activeFile) {
+            return;
+        }
+
+        if (debounceTimerRef.current !== null) {
+            window.clearTimeout(debounceTimerRef.current);
+        }
+
+        const nextValue = value ?? "";
+
+        debounceTimerRef.current = window.setTimeout(() => {
+            updateFile(activeFile.id, nextValue);
+        }, 500);
+    };
 
     if (!activeFile) {
         return (
@@ -123,7 +142,7 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
                 defaultLanguage={inferMonacoLanguage(activeFile)}
                 theme="vs-dark"
                 onMount={handleEditorMount}
-                onChange={(value) => updateFile(activeFile.id, value ?? "")}
+                onChange={handleEditorChange}
                 options={{
                     fontSize: 14,
                     minimap: { enabled: false },

@@ -1,9 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { projectStore } from "../../store/ProjectStore";
-import { editorTabsStore } from "../../store/editorTabsStore";
-import { useFileStore } from "../../store/useFileStore";
-import useWebSocketStore from "../../store/useWebSocketStore";
+import { useEditorStore } from "../../store/useEditorStore";
 import { FileExplorer } from "./FileExplorer";
 import { TabBar } from "./TabBar";
 import { EditorContainer } from "./EditorContainer";
@@ -15,18 +13,12 @@ export function CodeEditorWorkspace() {
     const project = projectStore((state) => state.project);
     const isLoading = projectStore((state) => state.isLoading);
     const getproject = projectStore((state) => state.getproject);
-    const activeFile = editorTabsStore((state) => state.activeFile);
-    const initializeFileSystem = editorTabsStore((state) => state.initializeFileSystem);
+    const activeFile = useEditorStore((state) => state.activeFile);
+    const initializeFileSystem = useEditorStore((state) => state.initializeFileSystem);
 
-    // web socket and file actions
-    const connectSocket = useWebSocketStore((state) => state.connect);
-    const disconnectSocket = useWebSocketStore((state) => state.disconnect);
-    const isSocketConnected = useWebSocketStore((state) => state.isConnected);
-
-    // file store actions
-    const requestFile = useFileStore((state) => state.requestFile);
-    const subscribeToFileContent = useFileStore((state) => state.subscribeToFileContent);
-    const unsubscribeAllFileEvents = useFileStore((state) => state.unsubscribeAll);
+    const connectSocket = useEditorStore((state) => state.connectSocket);
+    const disconnectSocket = useEditorStore((state) => state.disconnectSocket);
+    const unsubscribeAllFileEvents = useEditorStore((state) => state.unsubscribeAll);
 
     useEffect(() => {
         if (id) {
@@ -56,15 +48,6 @@ export function CodeEditorWorkspace() {
         }
 
     }, [initializeFileSystem, project]);
-
-    useEffect(() => {
-        if (!isSocketConnected || !activeFile) {
-            return;
-        }
-
-        subscribeToFileContent(activeFile.id);
-        requestFile(activeFile.id);
-    }, [activeFile, isSocketConnected, requestFile, subscribeToFileContent]);
 
     if (isLoading && !project) {
         return (

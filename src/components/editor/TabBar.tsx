@@ -1,12 +1,12 @@
 import { FileCode2, X } from "lucide-react";
 import { cn } from "../../utils/cn";
-import { editorTabsStore } from "../../store/editorTabsStore";
+import { useEditorStore } from "../../store/useEditorStore";
 
 export function TabBar() {
-    const openFiles = editorTabsStore((state) => state.openFiles);
-    const activeFileId = editorTabsStore((state) => state.activeFile?.id ?? null);
-    const setActiveFile = editorTabsStore((state) => state.setActiveFile);
-    const closeFile = editorTabsStore((state) => state.closeFile);
+    const openFiles = useEditorStore((state) => state.openFiles);
+    const activeFileId = useEditorStore((state) => state.activeFile?.id ?? null);
+    const setActiveFile = useEditorStore((state) => state.setActiveFile);
+    const closeFile = useEditorStore((state) => state.closeFile);
 
     if (openFiles.length === 0) {
         return (

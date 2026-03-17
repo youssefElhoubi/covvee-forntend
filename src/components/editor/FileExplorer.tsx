@@ -2,8 +2,7 @@ import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { FolderTree } from "lucide-react";
 import { FileTree } from "../file-tree/FileTree";
 import type { ProjectDetailResponse } from "../../types/project.types";
-import { editorTabsStore } from "../../store/editorTabsStore";
-import type { EditorWorkspaceFile } from "../../store/editorTabsStore";
+import { useEditorStore, type EditorWorkspaceFile } from "../../store/useEditorStore";
 import type { FileResponse, FolderResponse } from "../../types/project.types";
 import { FolderContextMenu } from "./FolderContextMenu";
 
@@ -63,9 +62,9 @@ interface FileExplorerProps {
 }
 
 export function FileExplorer({ project }: FileExplorerProps) {
-    const fileSystem = editorTabsStore((state) => state.fileSystem);
-    const activeFileId = editorTabsStore((state) => state.activeFile?.id ?? null);
-    const openFile = editorTabsStore((state) => state.openFile);
+    const fileSystem = useEditorStore((state) => state.fileSystem);
+    const activeFileId = useEditorStore((state) => state.activeFile?.id ?? null);
+    const openFile = useEditorStore((state) => state.openFile);
     const [contextMenu, setContextMenu] = useState<ContextMenuState>(initialContextMenuState);
 
     const handleCloseContextMenu = () => {
