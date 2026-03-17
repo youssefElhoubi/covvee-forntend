@@ -5,6 +5,7 @@ import type { ProjectDetailResponse } from "../../types/project.types";
 import { useEditorStore, type EditorWorkspaceFile } from "../../store/useEditorStore";
 import type { FileResponse, FolderResponse } from "../../types/project.types";
 import { FolderContextMenu } from "./FolderContextMenu";
+import { FileContextMenu } from "./FileContextMenu";
 
 interface ContextMenuState {
     isOpen: boolean;
@@ -14,11 +15,27 @@ interface ContextMenuState {
     path: string[];
 }
 
+interface FileContextMenuState {
+    isOpen: boolean;
+    x: number;
+    y: number;
+    file: FileResponse | null;
+    path: string[];
+}
+
 const initialContextMenuState: ContextMenuState = {
     isOpen: false,
     x: 0,
     y: 0,
     folder: null,
+    path: [],
+};
+
+const initialFileContextMenuState: FileContextMenuState = {
+    isOpen: false,
+    x: 0,
+    y: 0,
+    file: null,
     path: [],
 };
 
@@ -66,9 +83,13 @@ export function FileExplorer({ project }: FileExplorerProps) {
     const activeFileId = useEditorStore((state) => state.activeFile?.id ?? null);
     const openFile = useEditorStore((state) => state.openFile);
     const [contextMenu, setContextMenu] = useState<ContextMenuState>(initialContextMenuState);
+    const [fileContextMenu, setFileContextMenu] = useState<FileContextMenuState>(
+        initialFileContextMenuState
+    );
 
     const handleCloseContextMenu = () => {
         setContextMenu(closeContextMenu());
+        setFileContextMenu(closeFileContextMenu());
     };
 
     const handleFolderContextMenu = (
@@ -76,7 +97,17 @@ export function FileExplorer({ project }: FileExplorerProps) {
         folder: FolderResponse,
         path: string[]
     ) => {
+        setFileContextMenu(closeFileContextMenu());
         setContextMenu(openContextMenu(event, folder, path));
+    };
+
+    const handleFileContextMenu = (
+        event: ReactMouseEvent<HTMLButtonElement>,
+        file: FileResponse,
+        path: string[]
+    ) => {
+        setContextMenu(closeContextMenu());
+        setFileContextMenu(openFileContextMenu(event, file, path));
     };
 
     const handleSelectFile = (file: FileResponse, path: string[]) => {
@@ -107,8 +138,36 @@ export function FileExplorer({ project }: FileExplorerProps) {
         handleCloseContextMenu();
     };
 
+    const handleRenameFile = () => {
+        // Intentionally left as a UI hook for future integration.
+        handleCloseContextMenu();
+    };
+
+    const handleDeleteFile = () => {
+        // Intentionally left as a UI hook for future integration.
+        handleCloseContextMenu();
+    };
+
+    function closeFileContextMenu() {
+        return initialFileContextMenuState;
+    }
+
+    function openFileContextMenu(
+        event: ReactMouseEvent<HTMLButtonElement>,
+        file: FileResponse,
+        path: string[]
+    ): FileContextMenuState {
+        return {
+            isOpen: true,
+            x: event.clientX,
+            y: event.clientY,
+            file,
+            path,
+        };
+    }
+
     useEffect(() => {
-        if (!contextMenu.isOpen) {
+        if (!contextMenu.isOpen && !fileContextMenu.isOpen) {
             return;
         }
 
@@ -120,7 +179,7 @@ export function FileExplorer({ project }: FileExplorerProps) {
         return () => {
             window.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [contextMenu.isOpen]);
+    }, [contextMenu.isOpen, fileContextMenu.isOpen]);
 
     return (
         <>
@@ -141,6 +200,7 @@ export function FileExplorer({ project }: FileExplorerProps) {
                     compact={false}
                     selectedFileId={activeFileId}
                     onSelectFile={handleSelectFile}
+                    onFileContextMenu={handleFileContextMenu}
                     onFolderContextMenu={handleFolderContextMenu}
                 />
             </div>
@@ -154,6 +214,14 @@ export function FileExplorer({ project }: FileExplorerProps) {
             onCreateFolder={handleCreateFolder}
             onRename={handleRename}
             onDelete={handleDelete}
+        />
+
+        <FileContextMenu
+            isOpen={fileContextMenu.isOpen}
+            position={{ x: fileContextMenu.x, y: fileContextMenu.y }}
+            targetFile={fileContextMenu.file}
+            onRename={handleRenameFile}
+            onDelete={handleDeleteFile}
         />
         </>
     );

@@ -8,6 +8,11 @@ interface FileTreeProps {
   projectData: ProjectDetailResponse;
   compact: boolean;
   onSelectFile: (file: FileResponse, path: string[]) => void;
+  onFileContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    file: FileResponse,
+    path: string[]
+  ) => void;
   onFolderContextMenu: (
     event: MouseEvent<HTMLButtonElement>,
     folder: FolderResponse,
@@ -20,6 +25,7 @@ export function FileTree({
   projectData,
   compact,
   onSelectFile,
+  onFileContextMenu,
   onFolderContextMenu,
   selectedFileId,
 }: FileTreeProps) {
@@ -33,6 +39,7 @@ export function FileTree({
           compact={compact}
           folderPath={[]}
           onSelectFile={onSelectFile}
+          onFileContextMenu={onFileContextMenu}
           onFolderContextMenu={onFolderContextMenu}
           onFolderToggle={() => undefined}
           selectedFileId={selectedFileId}
@@ -45,6 +52,7 @@ export function FileTree({
           file={file}
           depth={0}
           onSelect={() => onSelectFile(file, [])}
+          onContextMenu={(event) => onFileContextMenu(event, file, [])}
           isCompact={compact}
           isSelected={selectedFileId === file.id}
         />

@@ -1,4 +1,4 @@
-import type { FolderContextMenuProps } from "../../types/project.types";
+import type { FileContextMenuProps } from "../../types/project.types";
 
 function MenuItem({ label, onClick }: { label: string; onClick: () => void }) {
     return (
@@ -12,16 +12,14 @@ function MenuItem({ label, onClick }: { label: string; onClick: () => void }) {
     );
 }
 
-export function FolderContextMenu({
+export function FileContextMenu({
     isOpen,
     position,
-    targetFolder,
-    onCreateFile,
-    onCreateFolder,
+    targetFile,
     onRename,
     onDelete,
-}: FolderContextMenuProps) {
-    if (!isOpen || !targetFolder) {
+}: FileContextMenuProps) {
+    if (!isOpen || !targetFile) {
         return null;
     }
 
@@ -31,10 +29,8 @@ export function FolderContextMenu({
             style={{ left: position.x, top: position.y }}
             onMouseDown={(event) => event.stopPropagation()}
             role="menu"
-            aria-label={`Folder actions for ${targetFolder.name}`}
+            aria-label={`File actions for ${targetFile.name}`}
         >
-            <MenuItem label="Create File" onClick={onCreateFile} />
-            <MenuItem label="Create Folder" onClick={onCreateFolder} />
             <MenuItem label="Rename" onClick={onRename} />
             <MenuItem label="Delete" onClick={onDelete} />
         </div>

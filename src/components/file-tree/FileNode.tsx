@@ -6,6 +6,7 @@ import {
   FileText,
   type LucideIcon,
 } from "lucide-react";
+import type { MouseEvent } from "react";
 import { cn } from "../../utils/cn";
 import type { FileResponse } from "../../types/project.types";
 
@@ -35,6 +36,7 @@ interface FileNodeProps {
   file: FileResponse;
   depth: number;
   onSelect: (file: FileResponse) => void;
+  onContextMenu?: (event: MouseEvent<HTMLButtonElement>, file: FileResponse) => void;
   isCompact: boolean;
   isSelected: boolean;
 }
@@ -43,15 +45,26 @@ export function FileNode({
   file,
   depth,
   onSelect,
+  onContextMenu,
   isCompact,
   isSelected,
 }: FileNodeProps) {
   const Icon = getFileIcon(file.name);
 
+  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!onContextMenu) {
+      return;
+    }
+
+    event.preventDefault();
+    onContextMenu(event, file);
+  };
+
   return (
     <button
       type="button"
       onClick={() => onSelect(file)}
+      onContextMenu={handleContextMenu}
       title={isCompact ? file.name : undefined}
       className={cn(
         "group flex w-full items-center rounded-md py-1.5 text-left text-sm transition-colors",

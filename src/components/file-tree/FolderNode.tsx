@@ -25,6 +25,11 @@ interface FolderNodeProps {
   compact: boolean;
   folderPath: string[];
   onSelectFile: (file: FileResponse, folderPath: string[]) => void;
+  onFileContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    file: FileResponse,
+    path: string[]
+  ) => void;
   onFolderContextMenu: (
     event: MouseEvent<HTMLButtonElement>,
     folder: FolderResponse,
@@ -40,6 +45,7 @@ export function FolderNode({
   compact,
   folderPath,
   onSelectFile,
+  onFileContextMenu,
   onFolderContextMenu,
   onFolderToggle,
   selectedFileId,
@@ -111,6 +117,7 @@ export function FolderNode({
                   compact={compact}
                   folderPath={currentFolderPath}
                   onSelectFile={onSelectFile}
+                  onFileContextMenu={onFileContextMenu}
                   onFolderContextMenu={onFolderContextMenu}
                   onFolderToggle={onFolderToggle}
                   selectedFileId={selectedFileId}
@@ -122,6 +129,7 @@ export function FolderNode({
                   file={file}
                   depth={depth + 1}
                   onSelect={() => onSelectFile(file, currentFolderPath)}
+                  onContextMenu={(event) => onFileContextMenu(event, file, currentFolderPath)}
                   isCompact={compact}
                   isSelected={selectedFileId === file.id}
                 />
