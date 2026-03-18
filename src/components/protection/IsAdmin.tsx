@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 
 
 const IsAdmin: React.FC<IsLogedProps> = ({ Chiledren }) => {
-     const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const navigator = useNavigate()
     useEffect(() => {
@@ -18,11 +18,11 @@ const IsAdmin: React.FC<IsLogedProps> = ({ Chiledren }) => {
         }
         setIsLoading(false);
     }, [navigator])
-    
+
     if (isLoading) {
         return <div>Loading...</div>
     }
-    
+
     return (
         <div>
             {isAdmin && <Chiledren />}
