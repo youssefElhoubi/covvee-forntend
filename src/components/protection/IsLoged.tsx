@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 export interface IsLogedProps {
-    Chiledren: React.FC;
+    children: React.ReactNode;
 }
 
-const IsLoged: React.FC<IsLogedProps> = ({ Chiledren }) => {
+const IsLoged: React.FC<IsLogedProps> = ({ children }) => {
     const [token, setToken] = useState<string | null>(null)
     const navigator = useNavigate()
     useEffect(()=>{
@@ -14,7 +14,7 @@ const IsLoged: React.FC<IsLogedProps> = ({ Chiledren }) => {
     }, [])
     return (
         <>
-            {token ? <Chiledren /> : navigator('/login')}
+            {token ? children  : navigator('/login')}
         </>
     )
 }

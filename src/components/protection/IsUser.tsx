@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
+import type { IsLogedProps } from './IsLoged';
 
-export interface IsLogedProps {
-    Chiledren: React.FC;
-}
 
-const IsUser: React.FC<IsLogedProps> = ({ Chiledren }) => {
+const IsUser: React.FC<IsLogedProps> = ({ children }) => {
     const [isUser, setisUser] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const navigator = useNavigate()
@@ -27,7 +25,7 @@ const IsUser: React.FC<IsLogedProps> = ({ Chiledren }) => {
     
     return (
         <div>
-            {isUser && <Chiledren />}
+            {isUser && children }
         </div>
     )
 }

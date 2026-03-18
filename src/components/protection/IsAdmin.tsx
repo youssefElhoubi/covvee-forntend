@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 
-const IsAdmin: React.FC<IsLogedProps> = ({ Chiledren }) => {
+const IsAdmin: React.FC<IsLogedProps> = ({ children }) => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const navigator = useNavigate()
@@ -25,7 +25,7 @@ const IsAdmin: React.FC<IsLogedProps> = ({ Chiledren }) => {
 
     return (
         <div>
-            {isAdmin && <Chiledren />}
+            {isAdmin && children }
         </div>
     )
 }

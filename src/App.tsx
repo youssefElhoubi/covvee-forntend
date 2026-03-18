@@ -12,6 +12,9 @@ import AdminAuditLogsPage from "./pages/admin/AdminAuditLogsPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import ProjectsPage from "./pages/projectsPage";
+import IsAdmin from "./components/protection/IsAdmin";
+import IsLoged from "./components/protection/IsLoged";
+import IsUser from "./components/protection/IsUser";
 
 function App() {
   return (
@@ -23,44 +26,64 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <AuthenticatedLayout>
-              <ProjectsPage />
-            </AuthenticatedLayout>
+            <IsLoged>
+              <IsUser>
+                <AuthenticatedLayout>
+                  <ProjectsPage />
+                </AuthenticatedLayout>
+              </IsUser>
+            </IsLoged>
           }
         />
         <Route
           path="/code/:id"
           element={
-            <CodeEditorLayout>
-              <CodeEditorPage />
-            </CodeEditorLayout>
+            <IsLoged>
+              <IsUser>
+                <CodeEditorLayout>
+                  <CodeEditorPage />
+                </CodeEditorLayout>
+              </IsUser>
+            </IsLoged>
           }
         />
         <Route
           path="/admin"
           element={
-            <AdminLayout>
-              <AdminDashboardPage />
-            </AdminLayout>
+            <IsLoged>
+              <IsAdmin>
+                <AdminLayout>
+                  <AdminDashboardPage />
+                </AdminLayout>
+              </IsAdmin>
+            </IsLoged>
           }
         />
         <Route
           path="/admin/users"
           element={
-            <AdminLayout>
-              <AdminUsersPage />
-            </AdminLayout>
+            <IsLoged>
+              <IsAdmin>
+                <AdminLayout>
+                  <AdminUsersPage />
+                </AdminLayout>
+              </IsAdmin>
+            </IsLoged>
           }
         />
         <Route
           path="/admin/audit-logs"
           element={
-            <AdminLayout>
-              <AdminAuditLogsPage />
-            </AdminLayout>
+            <IsLoged>
+              <IsAdmin>
+                <AdminLayout>
+                  <AdminAuditLogsPage />
+                </AdminLayout>
+              </IsAdmin>
+            </IsLoged>
           }
         />
-        
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
