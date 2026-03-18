@@ -118,36 +118,6 @@ export function FileExplorer({ project }: FileExplorerProps) {
         }
     };
 
-    const handleCreateFile = () => {
-        // Intentionally left as a UI hook for future integration.
-        handleCloseContextMenu();
-    };
-
-    const handleCreateFolder = () => {
-        // Intentionally left as a UI hook for future integration.
-        handleCloseContextMenu();
-    };
-
-    const handleRename = () => {
-        // Intentionally left as a UI hook for future integration.
-        handleCloseContextMenu();
-    };
-
-    const handleDelete = () => {
-        // Intentionally left as a UI hook for future integration.
-        handleCloseContextMenu();
-    };
-
-    const handleRenameFile = () => {
-        // Intentionally left as a UI hook for future integration.
-        handleCloseContextMenu();
-    };
-
-    const handleDeleteFile = () => {
-        // Intentionally left as a UI hook for future integration.
-        handleCloseContextMenu();
-    };
-
     function closeFileContextMenu() {
         return initialFileContextMenuState;
     }
@@ -210,18 +180,14 @@ export function FileExplorer({ project }: FileExplorerProps) {
             isOpen={contextMenu.isOpen}
             position={{ x: contextMenu.x, y: contextMenu.y }}
             targetFolder={contextMenu.folder}
-            onCreateFile={handleCreateFile}
-            onCreateFolder={handleCreateFolder}
-            onRename={handleRename}
-            onDelete={handleDelete}
+            handleCloseContextMenu={handleCloseContextMenu}
         />
 
         <FileContextMenu
             isOpen={fileContextMenu.isOpen}
             position={{ x: fileContextMenu.x, y: fileContextMenu.y }}
             targetFile={fileContextMenu.file}
-            onRename={handleRenameFile}
-            onDelete={handleDeleteFile}
+            handleCloseContextMenu={handleCloseContextMenu}
         />
         </>
     );

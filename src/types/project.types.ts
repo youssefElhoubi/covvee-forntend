@@ -16,18 +16,15 @@ export interface FolderContextMenuProps {
   isOpen: boolean;
   position: ContextMenuPosition;
   targetFolder: FolderResponse | null;
-  onCreateFile: () => void;
-  onCreateFolder: () => void;
-  onRename: () => void;
-  onDelete: () => void;
+  handleCloseContextMenu:()=>void
 }
 
 export interface FileContextMenuProps {
   isOpen: boolean;
   position: ContextMenuPosition;
   targetFile: FileResponse | null;
-  onRename: () => void;
-  onDelete: () => void;
+  
+  handleCloseContextMenu:()=>void
 }
 
 // Layout-specific types

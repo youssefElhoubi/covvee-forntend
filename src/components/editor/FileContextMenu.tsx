@@ -6,12 +6,13 @@ export function FileContextMenu({
     isOpen,
     position,
     targetFile,
-    onRename,
-    onDelete,
+    handleCloseContextMenu
+    
 }: FileContextMenuProps) {
     if (!isOpen || !targetFile) {
         return null;
     }
+    
 
     return (
         <div
@@ -21,8 +22,8 @@ export function FileContextMenu({
             role="menu"
             aria-label={`File actions for ${targetFile.name}`}
         >
-            <MenuItem label="Rename" onClick={onRename} />
-            <MenuItem label="Delete" onClick={onDelete} />
+            <MenuItem label="Rename" onClick={handleCloseContextMenu} />
+            <MenuItem label="Delete" onClick={handleCloseContextMenu} />
         </div>
     );
 }

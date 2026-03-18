@@ -6,10 +6,7 @@ export function FolderContextMenu({
     isOpen,
     position,
     targetFolder,
-    onCreateFile,
-    onCreateFolder,
-    onRename,
-    onDelete,
+    handleCloseContextMenu,
 }: FolderContextMenuProps) {
     if (!isOpen || !targetFolder) {
         return null;
@@ -25,10 +22,10 @@ export function FolderContextMenu({
             role="menu"
             aria-label={`Folder actions for ${targetFolder.name}`}
         >
-            <MenuItem label="Create File" onClick={onCreateFile} />
-            <MenuItem label="Create Folder" onClick={onCreateFolder} />
-            <MenuItem label="Rename" onClick={onRename} />
-            <MenuItem label="Delete" onClick={onDelete} />
+            <MenuItem label="Create File" onClick={handleCloseContextMenu} />
+            <MenuItem label="Create Folder" onClick={handleCloseContextMenu} />
+            <MenuItem label="Rename" onClick={handleCloseContextMenu} />
+            <MenuItem label="Delete" onClick={handleCloseContextMenu} />
         </div>
     );
 }
