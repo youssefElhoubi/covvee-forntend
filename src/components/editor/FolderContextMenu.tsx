@@ -1,16 +1,6 @@
 import type { FolderContextMenuProps } from "../../types/project.types";
+import MenuItem from "./MenuItem";
 
-function MenuItem({ label, onClick }: { label: string; onClick: () => void }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100"
-        >
-            {label}
-        </button>
-    );
-}
 
 export function FolderContextMenu({
     isOpen,
@@ -24,6 +14,8 @@ export function FolderContextMenu({
     if (!isOpen || !targetFolder) {
         return null;
     }
+    console.log(targetFolder);
+    
 
     return (
         <div

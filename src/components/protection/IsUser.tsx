@@ -9,7 +9,9 @@ const IsUser: React.FC<IsLogedProps> = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const navigator = useNavigate()
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        
+        const user = localStorage.getItem('token') || 'null';
+        
         const decodedUser = jwtDecode<{ roles?: string[] }>(user);
         if (decodedUser?.roles?.includes('ROLE_USER')) {
             setisUser(true);
