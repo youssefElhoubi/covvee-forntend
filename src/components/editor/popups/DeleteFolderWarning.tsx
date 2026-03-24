@@ -1,3 +1,4 @@
+import { DeleteFolder } from "../../../services/FolderService";
 import type { FolderPopupModel } from "../../../types/FolderPopupModel";
 import { ContextActionModal } from "./ContextActionModal";
 
@@ -15,6 +16,9 @@ export function DeleteFolderWarning({
             confirmLabel="Delete"
             destructive
             onClose={onClose}
+            onConfirm={()=>{
+                DeleteFolder(folder?.id||"")
+            }}
         />
     );
 }

@@ -44,16 +44,44 @@ function buildWorkspaceFile(file: FileResponse, path: string[]): EditorWorkspace
 }
 
 function flattenFolders(folders: FolderResponse[], parentPath: string[]): EditorWorkspaceFile[] {
+    // 1. Failsafe: If folders is null/undefined, stop the recursion safely
+    if (!folders || !Array.isArray(folders)) {
+        return [];
+    }
+
     return folders.flatMap((folder) => {
+        // 2. Failsafe: Ignore corrupted [null] entries in the array
+        if (!folder) {
+            return [];
+        }
+
         const currentPath = [...parentPath, folder.name];
-        const files = folder.files.map((file) => buildWorkspaceFile(file, currentPath));
-        return [...files, ...flattenFolders(folder.children, currentPath)];
+        
+        // 3. Failsafe: Fallback to an empty array if folder.files is null
+        const safeFiles = folder.files || [];
+        const files = safeFiles
+            .filter((file) => file !== null) // Ignore [null] files
+            .map((file) => buildWorkspaceFile(file, currentPath));
+
+        // 4. Failsafe: Fallback to an empty array if folder.children is null
+        const safeChildren = folder.children || [];
+        
+        return [...files, ...flattenFolders(safeChildren, currentPath)];
     });
 }
 
 function flattenProjectFiles(project: ProjectDetailResponse): EditorWorkspaceFile[] {
-    const rootFiles = project.rootFiles.map((file) => buildWorkspaceFile(file, []));
-    return [...rootFiles, ...flattenFolders(project.rootFolders, [])];
+    // Top-level failsafe just in case the project object itself is corrupted
+    if (!project) return [];
+
+    const safeRootFiles = project.rootFiles || [];
+    const safeRootFolders = project.rootFolders || [];
+
+    const rootFiles = safeRootFiles
+        .filter((file) => file !== null) // Ignore [null] files
+        .map((file) => buildWorkspaceFile(file, []));
+        
+    return [...rootFiles, ...flattenFolders(safeRootFolders, [])];
 }
 
 function getNextActiveFile(openFiles: EditorWorkspaceFile[], removedIndex: number) {

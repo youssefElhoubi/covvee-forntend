@@ -44,4 +44,18 @@ export const getfolder = async (id: string): Promise<FolderResponse> => {
         throw error; 
     }
 }
+export const DeleteFolder = async (args:String) => {    
+    try {
+        const token: string = localStorage.getItem("token") || "null";
+        fetch(`${url}/folders/${args}`, {
+            method: "delete",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 

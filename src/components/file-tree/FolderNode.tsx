@@ -65,6 +65,8 @@ export function FolderNode({
     event.preventDefault();
     onFolderContextMenu(event, folder, currentFolderPath);
   };
+  console.log(folder.children && folder.children.length === 1 && folder.children[0] === null);
+  
 
   return (
     <div>
@@ -98,7 +100,6 @@ export function FolderNode({
 
         {!compact ? <span className="ml-2 truncate">{folder.name}</span> : null}
       </button>
-
       <AnimatePresence initial={false}>
         {isOpen && !compact ? (
           <motion.div
@@ -109,19 +110,22 @@ export function FolderNode({
             className="overflow-hidden"
           >
             <div className="ml-2 border-l border-white/10 pl-2">
-              {folder.children.map((child) => (
-                <FolderNode
-                  key={child.id}
-                  folder={child}
-                  depth={depth + 1}
-                  compact={compact}
-                  folderPath={currentFolderPath}
-                  onSelectFile={onSelectFile}
-                  onFileContextMenu={onFileContextMenu}
-                  onFolderContextMenu={onFolderContextMenu}
-                  onFolderToggle={onFolderToggle}
-                  selectedFileId={selectedFileId}
-                />
+            
+            {folder.children && folder.children.length === 1 && folder.children[0] === null ? <></>:folder.children.map((child) => (
+                <>
+                  <FolderNode
+                    key={child.id}
+                    folder={child}
+                    depth={depth + 1}
+                    compact={compact}
+                    folderPath={currentFolderPath}
+                    onSelectFile={onSelectFile}
+                    onFileContextMenu={onFileContextMenu}
+                    onFolderContextMenu={onFolderContextMenu}
+                    onFolderToggle={onFolderToggle}
+                    selectedFileId={selectedFileId}
+                  />
+                </>
               ))}
               {folder.files.map((file) => (
                 <FileNode
