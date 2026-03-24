@@ -1,17 +1,13 @@
+import type { FilePopupModel } from "../../../types/FIlePopupModel";
 import { ContextActionModal } from "./ContextActionModal";
 
-type DeleteFileWarningProps = {
-    isOpen: boolean;
-    fileName: string;
-    onClose: () => void;
-};
 
-export function DeleteFileWarning({ isOpen, fileName, onClose }: DeleteFileWarningProps) {
+export function DeleteFileWarning({ isOpen, file, onClose }:FilePopupModel) {
     return (
         <ContextActionModal
             isOpen={isOpen}
             title="Delete File"
-            description={`You are about to delete \"${fileName}\".`}
+            description={`You are about to delete \"${file?.name}\".`}
             confirmLabel="Delete"
             destructive
             onClose={onClose}

@@ -55,7 +55,7 @@ export function FileContextMenu({
             />
             <DeleteFileWarning
                 isOpen={activePopup === "delete"}
-                fileName={selectedFileName}
+                file={targetFile}
                 onClose={closePopup}
             />
         </>
