@@ -65,7 +65,7 @@ export function FolderContextMenu({
             />
             <RenameFolderModal
                 isOpen={activePopup === "rename"}
-                folderName={selectedFolderName}
+                folder={targetFolder}
                 onClose={closePopup}
             />
             <DeleteFolderWarning

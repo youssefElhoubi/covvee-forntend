@@ -1,17 +1,14 @@
+import type { FolderPopupModel } from "../../../types/FolderPopupModel";
 import { ContextActionModal } from "./ContextActionModal";
 
-type RenameFolderModalProps = {
-    isOpen: boolean;
-    folderName: string;
-    onClose: () => void;
-};
 
-export function RenameFolderModal({ isOpen, folderName, onClose }: RenameFolderModalProps) {
+export function RenameFolderModal({ isOpen, folder, onClose }:FolderPopupModel
+) {
     return (
         <ContextActionModal
             isOpen={isOpen}
             title="Rename Folder"
-            description={`Rename the folder \"${folderName}\".`}
+            description={`Rename the folder \"${folder?.name}\".`}
             confirmLabel="Continue"
             onClose={onClose}
         />
