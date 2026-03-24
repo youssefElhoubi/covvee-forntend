@@ -1,16 +1,15 @@
 import type { FolderPopupModel } from "../../../types/FolderPopupModel";
-import { ContextActionModal } from "./ContextActionModal";
+import { CreateFolderForm } from "../CreateFolderForm";
 
 
-export function CreateFolderModal({ isOpen, folder, onClose }:FolderPopupModel
+export function CreateFolderModal({ isOpen, folder, onClose }: FolderPopupModel
 ) {
     return (
-        <ContextActionModal
-            isOpen={isOpen}
-            title="Create Folder"
-            description={`Create a nested folder inside \"${folder?.name}\".`}
-            confirmLabel="Continue"
-            onClose={onClose}
-        />
+        <>
+            {isOpen &&
+                <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+                    <CreateFolderForm folder={folder} close={onClose} />
+                </div>}
+        </>
     );
 }

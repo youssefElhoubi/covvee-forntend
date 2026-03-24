@@ -38,7 +38,7 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
         try {
             setSubmitError("");
 
-            const response = await createProject({
+            await createProject({
                 name: values.name,
                 description: values.description || undefined,
                 visibility: values.visibility,
