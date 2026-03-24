@@ -17,6 +17,7 @@ export const createFile = async (args: CreateFileRequest): Promise<void> => {
     }
 }
 export const DeleteFile = async (args:DeleteFileRequest) => {
+    console.log(args);
     
     try {
         const token: string = localStorage.getItem("token") || "null";

@@ -1,8 +1,9 @@
-import { useState } from "react";
-import type { FileContextMenuProps } from "../../types/project.types";
+import { useEffect, useState } from "react";
+import type { FileContextMenuProps, FolderResponse } from "../../types/project.types";
 import MenuItem from "./MenuItem";
 import { RenameFileModal } from "./popups/RenameFileModal";
 import { DeleteFileWarning } from "./popups/DeleteFileWarning";
+import { getfolder } from "../../services/FolderService";
 
 type FilePopupAction = "rename" | "delete" | null;
 
@@ -13,9 +14,21 @@ export function FileContextMenu({
     targetFile,
     handleCloseContextMenu
 }: FileContextMenuProps) {
+    const [targetFolder, setTargetFolder] = useState<FolderResponse | null>(null);
     const [activePopup, setActivePopup] = useState<FilePopupAction>(null);
     const [selectedFile, setSelectedFile] = useState<typeof targetFile | null>(null);
-
+    const getparent = async () => {
+        if(targetFile){
+            const responce = await getfolder(targetFile.parentId);
+            setTargetFolder(responce);            
+        }
+    };
+    useEffect(() => {
+        getparent();
+        
+    }, [targetFile])
+    
+    
     const handleOpenPopup = (action: Exclude<FilePopupAction, null>) => {
         if (!targetFile) return;
 
@@ -29,10 +42,11 @@ export function FileContextMenu({
     };
 
     const shouldRenderMenu = isOpen && !!targetFile;
+    
 
     return (
         <>
-            {shouldRenderMenu ? (
+            {shouldRenderMenu && (
                 <div
                     className="fixed z-50 min-w-52 rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl"
                     style={{ left: position.x, top: position.y }}
@@ -43,18 +57,27 @@ export function FileContextMenu({
                     <MenuItem label="Rename" onClick={() => handleOpenPopup("rename")} />
                     <MenuItem label="Delete" onClick={() => handleOpenPopup("delete")} />
                 </div>
-            ) : null}
+            )}
 
-            <RenameFileModal
-                isOpen={activePopup === "rename"}
-                file={selectedFile}
-                onClose={closePopup}
-            />
-            <DeleteFileWarning
-                isOpen={activePopup === "delete"}
-                file={selectedFile}
-                onClose={closePopup}
-            />
+            {/* ✅ Only mount the Rename Modal if we clicked Rename */}
+            {activePopup === "rename" && (
+                <RenameFileModal
+                    isOpen={true} 
+                    file={selectedFile}
+                    folder={targetFolder}
+                    onClose={closePopup}
+                />
+            )}
+
+            {/* ✅ Only mount the Delete Modal if we clicked Delete */}
+            {activePopup === "delete" && (
+                <DeleteFileWarning
+                    isOpen={true} 
+                    file={selectedFile}
+                    folder={targetFolder}
+                    onClose={closePopup}
+                />
+            )}
         </>
     );
 }

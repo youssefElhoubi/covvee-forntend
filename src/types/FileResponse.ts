@@ -3,5 +3,5 @@ export interface FileResponse {
     name: string;
     language: string;
     content: string;
-    parentId: string | null;
+    parentId: string ;
 }

@@ -1,4 +1,4 @@
 export interface DeleteFileRequest {
-    fileId:string
-    ProjectId:string
+    fileId?:string
+    ProjectId?:string
 }
