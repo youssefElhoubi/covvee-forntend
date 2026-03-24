@@ -12,16 +12,15 @@ export function FileContextMenu({
     position,
     targetFile,
     handleCloseContextMenu
-    
 }: FileContextMenuProps) {
     const [activePopup, setActivePopup] = useState<FilePopupAction>(null);
+    const [selectedFile, setSelectedFile] = useState<typeof targetFile | null>(null);
 
     const handleOpenPopup = (action: Exclude<FilePopupAction, null>) => {
-        if (!targetFile) {
-            return;
-        }
+        if (!targetFile) return;
 
-        handleCloseContextMenu();
+        setSelectedFile(targetFile); // ✅ store it locally FIRST
+        handleCloseContextMenu();    // then close menu
         setActivePopup(action);
     };
 
@@ -48,12 +47,12 @@ export function FileContextMenu({
 
             <RenameFileModal
                 isOpen={activePopup === "rename"}
-                file={targetFile}
+                file={selectedFile}
                 onClose={closePopup}
             />
             <DeleteFileWarning
                 isOpen={activePopup === "delete"}
-                file={targetFile}
+                file={selectedFile}
                 onClose={closePopup}
             />
         </>

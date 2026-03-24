@@ -15,12 +15,13 @@ export function FolderContextMenu({
     handleCloseContextMenu,
 }: FolderContextMenuProps) {
     const [activePopup, setActivePopup] = useState<FolderPopupAction>(null);
-    
+    const [selectedFolder, setSelectedFolder] = useState<typeof targetFolder | null>(null);
+
     const handleOpenPopup = (action: Exclude<FolderPopupAction, null>) => {
-        if (!targetFolder) {
-            return;
-        }
-        handleCloseContextMenu();
+        if (!targetFolder) return;
+
+        setSelectedFolder(targetFolder); // ✅ store it first
+        handleCloseContextMenu();        // then close parent menu
         setActivePopup(action);
     };
 
@@ -52,22 +53,22 @@ export function FolderContextMenu({
 
             <CreateFileModal
                 isOpen={activePopup === "create-file"}
-                folder={targetFolder}
+                folder={selectedFolder}
                 onClose={closePopup}
             />
             <CreateFolderModal
                 isOpen={activePopup === "create-folder"}
-                folder={targetFolder}
+                folder={selectedFolder}
                 onClose={closePopup}
             />
             <RenameFolderModal
                 isOpen={activePopup === "rename"}
-                folder={targetFolder}
+                folder={selectedFolder}
                 onClose={closePopup}
             />
             <DeleteFolderWarning
                 isOpen={activePopup === "delete"}
-                folder={targetFolder}
+                folder={selectedFolder}
                 onClose={closePopup}
             />
         </>
