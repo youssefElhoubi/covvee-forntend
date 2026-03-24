@@ -1,6 +1,12 @@
+import { useState } from "react";
 import type { FolderContextMenuProps } from "../../types/project.types";
 import MenuItem from "./MenuItem";
+import { CreateFileModal } from "./popups/CreateFileModal";
+import { CreateFolderModal } from "./popups/CreateFolderPopup";
+import { RenameFolderModal } from "./popups/RenameFolderModal";
+import { DeleteFolderWarning } from "./popups/DeleteFolderWarning";
 
+type FolderPopupAction = "create-file" | "create-folder" | "rename" | "delete" | null;
 
 export function FolderContextMenu({
     isOpen,
@@ -8,24 +14,65 @@ export function FolderContextMenu({
     targetFolder,
     handleCloseContextMenu,
 }: FolderContextMenuProps) {
-    if (!isOpen || !targetFolder) {
-        return null;
-    }
-    console.log(targetFolder);
-    
+    const [activePopup, setActivePopup] = useState<FolderPopupAction>(null);
+    const [selectedFolderName, setSelectedFolderName] = useState<string>("");
+
+    const handleOpenPopup = (action: Exclude<FolderPopupAction, null>) => {
+        if (!targetFolder) {
+            return;
+        }
+
+        setSelectedFolderName(targetFolder.name);
+        handleCloseContextMenu();
+        setActivePopup(action);
+    };
+
+    const closePopup = () => {
+        setActivePopup(null);
+    };
+
+    const shouldRenderMenu = isOpen && !!targetFolder;
 
     return (
-        <div
-            className="fixed z-50 min-w-52 rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl"
-            style={{ left: position.x, top: position.y }}
-            onMouseDown={(event) => event.stopPropagation()}
-            role="menu"
-            aria-label={`Folder actions for ${targetFolder.name}`}
-        >
-            <MenuItem label="Create File" onClick={handleCloseContextMenu} />
-            <MenuItem label="Create Folder" onClick={handleCloseContextMenu} />
-            <MenuItem label="Rename" onClick={handleCloseContextMenu} />
-            <MenuItem label="Delete" onClick={handleCloseContextMenu} />
-        </div>
+        <>
+            {shouldRenderMenu ? (
+                <div
+                    className="fixed z-50 min-w-52 rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl"
+                    style={{ left: position.x, top: position.y }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                    role="menu"
+                    aria-label={`Folder actions for ${targetFolder.name}`}
+                >
+                    <MenuItem label="Create File" onClick={() => handleOpenPopup("create-file")} />
+                    <MenuItem
+                        label="Create Folder"
+                        onClick={() => handleOpenPopup("create-folder")}
+                    />
+                    <MenuItem label="Rename" onClick={() => handleOpenPopup("rename")} />
+                    <MenuItem label="Delete" onClick={() => handleOpenPopup("delete")} />
+                </div>
+            ) : null}
+
+            <CreateFileModal
+                isOpen={activePopup === "create-file"}
+                folderName={selectedFolderName}
+                onClose={closePopup}
+            />
+            <CreateFolderModal
+                isOpen={activePopup === "create-folder"}
+                folderName={selectedFolderName}
+                onClose={closePopup}
+            />
+            <RenameFolderModal
+                isOpen={activePopup === "rename"}
+                folderName={selectedFolderName}
+                onClose={closePopup}
+            />
+            <DeleteFolderWarning
+                isOpen={activePopup === "delete"}
+                folderName={selectedFolderName}
+                onClose={closePopup}
+            />
+        </>
     );
 }
