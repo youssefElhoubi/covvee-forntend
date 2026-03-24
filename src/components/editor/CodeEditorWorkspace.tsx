@@ -42,7 +42,6 @@ export function CodeEditorWorkspace() {
     // 2️⃣ Handle Data Fetching Phase (Waits for connection!)
     useEffect(() => {
         if (isConnected && id) {
-            console.log("🚀 Socket connected, fetching project details...");
             getproject(id);
         }
     }, [isConnected, id, getproject]);

@@ -28,7 +28,7 @@ export const LoginPage = () => {
             localStorage.setItem("token", result.token);
             navigator("/dashboard");
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             setError("Invalid email or password");
         }
     };

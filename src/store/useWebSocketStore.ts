@@ -26,7 +26,7 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             return;
         }
 
-        console.log("Initializing Covvee WebSocket Connection via Zustand...");
+        // console.log("Initializing Covvee WebSocket Connection via Zustand...");
 
         const client = new Client({
             webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
@@ -38,10 +38,7 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
 
-            // 1. THE DEBUG HOOK: This will print every single background step to the console
-            debug: (str) => {
-                console.log('STOMP DEBUG:', str);
-            },
+            
 
             // 2. THE TRANSPORT ERROR HOOK: This catches network/CORS/HTTP blocks
             onWebSocketError: (event) => {
@@ -50,12 +47,12 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             },
 
             onConnect: () => {
-                console.log('Successfully connected to STOMP broker.');
+                // console.log('Successfully connected to STOMP broker.');
                 set({ isConnected: true }); 
             },
             
             onDisconnect: () => {
-                console.log('Disconnected from STOMP broker.');
+                // console.log('Disconnected from STOMP broker.');
                 set({ isConnected: false, stompClient: null });
             },
 
@@ -64,7 +61,7 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             }
         });
         client.activate();
-        console.log(get().isConnected);
+        // console.log(get().isConnected);
         
 
         

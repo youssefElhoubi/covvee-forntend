@@ -15,14 +15,18 @@ interface CreateFileFormProps {
 }
 
 export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close }) => {
+    const { id } = useParams();
     const submite: SubmitHandler<CreateFileFormInputs> = async ({ fileName, folderId }) => {
-        const { id } = useParams();
+        console.log(id);
+        
         try {
             const body = {
                 name: fileName,
                 parentFolderId: folderId,
-                projectid: id
+                projectId: id
             }
+            console.log(body);
+            
             await createFile(body);
             close();
         } catch (error) {

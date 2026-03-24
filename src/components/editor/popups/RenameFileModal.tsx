@@ -1,9 +1,7 @@
 import type { FilePopupModel } from "../../../types/FIlePopupModel";
 import { ContextActionModal } from "./ContextActionModal";
 
-export function RenameFileModal({ isOpen, file, onClose }: FilePopupModel) {
-    console.log(file);
-    
+export function RenameFileModal({ isOpen, file, onClose }: FilePopupModel) {    
     return (
         <ContextActionModal
             isOpen={isOpen}
