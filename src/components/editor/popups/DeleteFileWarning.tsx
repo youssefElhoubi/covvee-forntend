@@ -11,6 +11,8 @@ export function DeleteFileWarning({ isOpen, file, onClose }:FilePopupModel) {
             confirmLabel="Delete"
             destructive
             onClose={onClose}
-        />
+        >
+        </ContextActionModal>
+
     );
 }

@@ -1,5 +1,5 @@
 export type CreateFileRequest = {
     name:string,
-    projectId:string
+    projectId?:string
     parentFolderId:string
 }

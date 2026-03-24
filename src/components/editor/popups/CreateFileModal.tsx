@@ -1,15 +1,14 @@
 import type { FolderPopupModel } from "../../../types/FolderPopupModel";
-import { ContextActionModal } from "./ContextActionModal";
+import { CreateFileForm } from "../CreateFileForm";
 
 
 export function CreateFileModal({ isOpen, folder, onClose }: FolderPopupModel) {
     return (
-        <ContextActionModal
-            isOpen={isOpen}
-            title="Create File"
-            description={`Create a new file inside \"${folder?.name}\".`}
-            confirmLabel="Continue"
-            onClose={onClose}
-        />
+        <>
+            {isOpen &&
+                <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+                    <CreateFileForm folder={folder} close={onClose} />
+                </div>}
+        </>
     );
 }
