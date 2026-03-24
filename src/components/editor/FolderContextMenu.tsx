@@ -15,14 +15,11 @@ export function FolderContextMenu({
     handleCloseContextMenu,
 }: FolderContextMenuProps) {
     const [activePopup, setActivePopup] = useState<FolderPopupAction>(null);
-    const [selectedFolderName, setSelectedFolderName] = useState<string>("");
-
+    
     const handleOpenPopup = (action: Exclude<FolderPopupAction, null>) => {
         if (!targetFolder) {
             return;
         }
-
-        setSelectedFolderName(targetFolder.name);
         handleCloseContextMenu();
         setActivePopup(action);
     };
@@ -55,7 +52,7 @@ export function FolderContextMenu({
 
             <CreateFileModal
                 isOpen={activePopup === "create-file"}
-                folderName={selectedFolderName}
+                folder={targetFolder}
                 onClose={closePopup}
             />
             <CreateFolderModal
