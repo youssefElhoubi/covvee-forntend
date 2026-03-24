@@ -1,17 +1,12 @@
+import type { FilePopupModel } from "../../../types/FIlePopupModel";
 import { ContextActionModal } from "./ContextActionModal";
 
-type RenameFileModalProps = {
-    isOpen: boolean;
-    fileName: string;
-    onClose: () => void;
-};
-
-export function RenameFileModal({ isOpen, fileName, onClose }: RenameFileModalProps) {
+export function RenameFileModal({ isOpen, file, onClose }: FilePopupModel) {
     return (
         <ContextActionModal
             isOpen={isOpen}
             title="Rename File"
-            description={`Rename the file \"${fileName}\".`}
+            description={`Rename the file \"${file?.name}\".`}
             confirmLabel="Continue"
             onClose={onClose}
         />

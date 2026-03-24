@@ -15,14 +15,12 @@ export function FileContextMenu({
     
 }: FileContextMenuProps) {
     const [activePopup, setActivePopup] = useState<FilePopupAction>(null);
-    const [selectedFileName, setSelectedFileName] = useState<string>("");
 
     const handleOpenPopup = (action: Exclude<FilePopupAction, null>) => {
         if (!targetFile) {
             return;
         }
 
-        setSelectedFileName(targetFile.name);
         handleCloseContextMenu();
         setActivePopup(action);
     };
@@ -50,7 +48,7 @@ export function FileContextMenu({
 
             <RenameFileModal
                 isOpen={activePopup === "rename"}
-                fileName={selectedFileName}
+                file={targetFile}
                 onClose={closePopup}
             />
             <DeleteFileWarning
