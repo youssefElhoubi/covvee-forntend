@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FolderContextMenuProps } from "../../types/project.types";
 import MenuItem from "./MenuItem";
 import { CreateFileModal } from "./popups/CreateFileModal";
-import { CreateFolderModal } from "./popups/CreateFolderPopup";
+import { CreateFolderModal } from "./popups/CreateFolderModal";
 import { RenameFolderModal } from "./popups/RenameFolderModal";
 import { DeleteFolderWarning } from "./popups/DeleteFolderWarning";
 
@@ -60,7 +60,7 @@ export function FolderContextMenu({
             />
             <CreateFolderModal
                 isOpen={activePopup === "create-folder"}
-                folderName={selectedFolderName}
+                folder={targetFolder}
                 onClose={closePopup}
             />
             <RenameFolderModal

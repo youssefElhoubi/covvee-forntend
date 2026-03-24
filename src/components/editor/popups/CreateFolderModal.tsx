@@ -1,17 +1,14 @@
+import type { FolderPopupModel } from "../../../types/FolderPopupModel";
 import { ContextActionModal } from "./ContextActionModal";
 
-type CreateFolderModalProps = {
-    isOpen: boolean;
-    folderName: string;
-    onClose: () => void;
-};
 
-export function CreateFolderModal({ isOpen, folderName, onClose }: CreateFolderModalProps) {
+export function CreateFolderModal({ isOpen, folder, onClose }:FolderPopupModel
+) {
     return (
         <ContextActionModal
             isOpen={isOpen}
             title="Create Folder"
-            description={`Create a nested folder inside \"${folderName}\".`}
+            description={`Create a nested folder inside \"${folder?.name}\".`}
             confirmLabel="Continue"
             onClose={onClose}
         />
