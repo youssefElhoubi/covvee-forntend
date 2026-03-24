@@ -70,7 +70,7 @@ export function FolderContextMenu({
             />
             <DeleteFolderWarning
                 isOpen={activePopup === "delete"}
-                folderName={selectedFolderName}
+                folder={targetFolder}
                 onClose={closePopup}
             />
         </>
