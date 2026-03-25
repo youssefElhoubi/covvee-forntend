@@ -17,15 +17,17 @@ interface CreateFolderFormProps {
 
 export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ folder, close }) => {
     const { id } = useParams();
-    
+
     const submit: SubmitHandler<CreateFolderFormInputs> = async ({ folderName, parentFolderId }) => {
         try {
             const body = {
                 name: folderName,
-                parentFolderId: parentFolderId || '',
+                parentFolderId: parentFolderId || null,
                 projectId: id
             };
+            console.log(body);
             
+
             await createFolder(body);
             close();
         } catch (error) {
@@ -94,6 +96,12 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ folder, clos
                         className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                     >
                         Create Folder
+                    </button>
+                    <button
+                        onClick={() => close()}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                    >
+                        close
                     </button>
                 </div>
             </form>

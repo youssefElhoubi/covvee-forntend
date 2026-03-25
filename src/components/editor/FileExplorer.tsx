@@ -6,6 +6,7 @@ import { useEditorStore, type EditorWorkspaceFile } from "../../store/useEditorS
 import type { FileResponse, FolderResponse } from "../../types/project.types";
 import { FolderContextMenu } from "./FolderContextMenu";
 import { FileContextMenu } from "./FileContextMenu";
+import { RootContextMenu } from "./RootContextMenu";
 
 interface ContextMenuState {
     isOpen: boolean;
@@ -38,6 +39,12 @@ const initialFileContextMenuState: FileContextMenuState = {
     file: null,
     path: [],
 };
+interface RootContextMenuState {
+    isOpen: boolean;
+    x: number;
+    y: number;
+}
+const initialRootContextMenuState: RootContextMenuState = { isOpen: false, x: 0, y: 0 };
 
 function closeContextMenu() {
     return initialContextMenuState;
@@ -56,6 +63,8 @@ function openContextMenu(
         path,
     };
 }
+
+
 
 function getFileFullPath(file: FileResponse, path: string[]) {
     return path.length > 0 ? `${path.join("/")}/${file.name}` : file.name;
@@ -83,13 +92,27 @@ export function FileExplorer({ project }: FileExplorerProps) {
     const activeFileId = useEditorStore((state) => state.activeFile?.id ?? null);
     const openFile = useEditorStore((state) => state.openFile);
     const [contextMenu, setContextMenu] = useState<ContextMenuState>(initialContextMenuState);
-    const [fileContextMenu, setFileContextMenu] = useState<FileContextMenuState>(
-        initialFileContextMenuState
-    );
+    const [fileContextMenu, setFileContextMenu] = useState<FileContextMenuState>(initialFileContextMenuState);
+    const [rootContextMenu, setRootContextMenu] = useState<RootContextMenuState>(initialRootContextMenuState);
 
     const handleCloseContextMenu = () => {
         setContextMenu(closeContextMenu());
         setFileContextMenu(closeFileContextMenu());
+        setRootContextMenu(initialRootContextMenuState); // ✅ ADD THIS
+    };
+    const handleRootContextMenu = (event: ReactMouseEvent<HTMLDivElement>) => {
+        // Only open the root menu if they clicked the empty space (not a file/folder)
+        // event.target is what was actually clicked, currentTarget is the container
+        if (event.target === event.currentTarget) {
+            event.preventDefault(); // Stop normal browser menu
+            setContextMenu(closeContextMenu());
+            setFileContextMenu(closeFileContextMenu());
+            setRootContextMenu({
+                isOpen: true,
+                x: event.clientX,
+                y: event.clientY,
+            });
+        }
     };
 
     const handleFolderContextMenu = (
@@ -153,42 +176,51 @@ export function FileExplorer({ project }: FileExplorerProps) {
 
     return (
         <>
-        <aside className="flex h-full w-72 shrink-0 flex-col border-r border-white/10 bg-slate-900/70 backdrop-blur-xl">
-            <div className="flex h-12 items-center gap-2 border-b border-white/10 px-4">
-                <FolderTree className="h-4 w-4 text-emerald-300" />
-                <div className="min-w-0">
-                    <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                        Explorer
-                    </p>
-                    <p className="truncate text-sm text-slate-200">{project.name}</p>
+            <aside className="flex h-full w-72 shrink-0 flex-col border-r border-white/10 bg-slate-900/70 backdrop-blur-xl">
+                <div className="flex h-12 items-center gap-2 border-b border-white/10 px-4">
+                    <FolderTree className="h-4 w-4 text-emerald-300" />
+                    <div className="min-w-0">
+                        <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Explorer
+                        </p>
+                        <p className="truncate text-sm text-slate-200">{project.name}</p>
+                    </div>
                 </div>
-            </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto p-2">
-                <FileTree
-                    projectData={project}
-                    compact={false}
-                    selectedFileId={activeFileId}
-                    onSelectFile={handleSelectFile}
-                    onFileContextMenu={handleFileContextMenu}
-                    onFolderContextMenu={handleFolderContextMenu}
-                />
-            </div>
-        </aside>
+                <div
+                    className="min-h-0 flex-1 overflow-y-auto p-2"
+                    onContextMenu={handleRootContextMenu}
+                >
+                    <FileTree
+                        projectData={project}
+                        compact={false}
+                        selectedFileId={activeFileId}
+                        onSelectFile={handleSelectFile}
+                        onFileContextMenu={handleFileContextMenu}
+                        onFolderContextMenu={handleFolderContextMenu}
+                    />
+                </div>
+            </aside>
 
-        <FolderContextMenu
-            isOpen={contextMenu.isOpen}
-            position={{ x: contextMenu.x, y: contextMenu.y }}
-            targetFolder={contextMenu.folder}
-            handleCloseContextMenu={handleCloseContextMenu}
-        />
+            <FolderContextMenu
+                isOpen={contextMenu.isOpen}
+                position={{ x: contextMenu.x, y: contextMenu.y }}
+                targetFolder={contextMenu.folder}
+                handleCloseContextMenu={handleCloseContextMenu}
+            />
 
-        <FileContextMenu
-            isOpen={fileContextMenu.isOpen}
-            position={{ x: fileContextMenu.x, y: fileContextMenu.y }}
-            targetFile={fileContextMenu.file}
-            handleCloseContextMenu={handleCloseContextMenu}
-        />
+            <FileContextMenu
+                isOpen={fileContextMenu.isOpen}
+                position={{ x: fileContextMenu.x, y: fileContextMenu.y }}
+                targetFile={fileContextMenu.file}
+                handleCloseContextMenu={handleCloseContextMenu}
+            />
+
+            <RootContextMenu
+                isOpen={rootContextMenu.isOpen}
+                position={{ x: rootContextMenu.x, y: rootContextMenu.y }}
+                handleCloseContextMenu={handleCloseContextMenu}
+            />
         </>
     );
 }

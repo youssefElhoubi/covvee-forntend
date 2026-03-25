@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom';
 
 export interface CreateFileFormInputs {
     fileName: string;
-    folderId: string;
 }
 
 interface CreateFileFormProps {
@@ -16,17 +15,14 @@ interface CreateFileFormProps {
 
 export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close }) => {
     const { id } = useParams();
-    const submite: SubmitHandler<CreateFileFormInputs> = async ({ fileName, folderId }) => {
-        console.log(id);
-        
+    const submite: SubmitHandler<CreateFileFormInputs> = async ({ fileName }) => {
         try {
             const body = {
                 name: fileName,
-                parentFolderId: folderId,
+                parentFolderId: folder?.id || null,
                 projectId: id
             }
             console.log(body);
-            
             await createFile(body);
             close();
         } catch (error) {
@@ -39,16 +35,11 @@ export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close })
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm<CreateFileFormInputs>({
-        // Initialize the hidden field with the passed folder's ID
-        defaultValues: {
-            folderId: folder?.id || ''
-        }
-    });
+    } = useForm<CreateFileFormInputs>();
 
     useEffect(() => {
         if (folder) {
-            reset({ folderId: folder.id, fileName: '' });
+            reset({ fileName: '' });
         }
     }, [folder, reset]);
 
@@ -64,8 +55,6 @@ export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close })
             <form onSubmit={handleSubmit(submite)} className="space-y-5">
 
                 {/* Hidden input to pass the folder ID to the submit handler silently */}
-                <input type="hidden" {...register('folderId', { required: 'Folder context is missing' })} />
-
                 <div className="flex flex-col gap-1.5">
                     <label htmlFor="fileName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         File Name
@@ -88,12 +77,6 @@ export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close })
                             {errors.fileName.message}
                         </span>
                     )}
-                    {/* Failsafe error display if the hidden folder ID somehow goes missing */}
-                    {errors.folderId && (
-                        <span className="text-red-500 text-xs font-medium">
-                            {errors.folderId.message}
-                        </span>
-                    )}
                 </div>
 
                 <div className="pt-2 flex justify-end gap-3">
@@ -102,6 +85,12 @@ export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close })
                         className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
                     >
                         Create File
+                    </button>
+                    <button
+                        onClick={() => close()}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                    >
+                        close
                     </button>
                 </div>
             </form>
