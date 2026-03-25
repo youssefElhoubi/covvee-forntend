@@ -5,7 +5,7 @@ import { useState } from "react";
 
 
 export function OutputPanel() {
-    const [output, setOutput] = useState<String>("")
+    const [output] = useState<String>("")
     return (
         <div className="h-full flex flex-col">
             {/* Output Header */}
