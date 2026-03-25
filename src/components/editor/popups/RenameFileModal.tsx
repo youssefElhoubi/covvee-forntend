@@ -1,14 +1,15 @@
 import type { FilePopupModel } from "../../../types/FIlePopupModel";
-import { ContextActionModal } from "./ContextActionModal";
+import { RenameFileForm } from "../RenameFileForm";
 
 export function RenameFileModal({ isOpen, file, onClose }: FilePopupModel) {    
     return (
-        <ContextActionModal
-            isOpen={isOpen}
-            title="Rename File"
-            description={`Rename the file \"${file?.name}\".`}
-            confirmLabel="Continue"
-            onClose={onClose}
-        />
+        <>
+                    {isOpen &&
+                        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+                            <RenameFileForm file={file} close={onClose} />
+                        </div>}
+                </>
+            
+        
     );
 }

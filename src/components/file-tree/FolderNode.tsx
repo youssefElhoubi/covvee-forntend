@@ -64,9 +64,7 @@ export function FolderNode({
   const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onFolderContextMenu(event, folder, currentFolderPath);
-  };
-  console.log(folder.children && folder.children.length === 1 && folder.children[0] === null);
-  
+  };  
 
   return (
     <div>

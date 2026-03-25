@@ -1,5 +1,6 @@
 import type { CreateFileRequest } from "../types/file/CreateFileRequest";
 import type { DeleteFileRequest } from "../types/file/DeleteFileRequest";
+import type { RenameFileRequest } from "../types/file/reanameFileRequest";
 const url = import.meta.env.VITE_API_URL;
 export const createFile = async (args: CreateFileRequest): Promise<void> => {
     try {
@@ -31,3 +32,28 @@ export const DeleteFile = async (args:DeleteFileRequest) => {
         console.log(error);
     }
 }
+
+export const renameFile = async (request: RenameFileRequest): Promise<string> => {
+    try {
+                const token: string = localStorage.getItem("token") || "null";
+
+        const response = await fetch(`${url}/file/rename`, {
+            method: "PUT",
+            headers:  {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to rename file. Status: ${response.status}`);
+        }
+
+        // The backend returns a plain string (projectId)
+        return await response.text();
+    } catch (error) {
+        console.error("Error renaming file:", error);
+        throw error;
+    }
+};
