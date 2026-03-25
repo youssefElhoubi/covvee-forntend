@@ -1,19 +1,31 @@
-import type { ExecutionResult } from "../types/ExecutionResult"
+import type { ExecutionResult } from "../types/ExecutionResult";
+
 const url = import.meta.env.VITE_API_URL;
+
 export const execute = async (params: string): Promise<ExecutionResult> => {
+    console.log(params);
+    
     try {
-        const token: string = localStorage.getItem("token") || "null";
-        const result = await fetch(`${url}/execute/project`, {
-            method: "post",
-            body: JSON.stringify(params),
+        // Use empty string instead of literal "null" for safety
+        const token: string = localStorage.getItem("token") || ""; 
+        
+        const response = await fetch(`${url}/execute/project`, {
+            method: "POST", // Capitalized convention
+            body: params,
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${token}`
             }
-        })
-        return result.json();
+        });
+
+        // Crucial: Throw an error if the server crashes so the UI can catch it!
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        return await response.json();
     } catch (error) {
-        console.log(error);
-        throw error
+        console.error("Execution error:", error);
+        throw error;
     }
 }
