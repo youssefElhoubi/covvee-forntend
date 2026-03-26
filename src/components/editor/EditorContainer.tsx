@@ -21,26 +21,29 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
     const viewStatesRef = useRef(new Map<string, MonacoEditor.ICodeEditorViewState | null>());
     const previousFileIdRef = useRef<string | null>(null);
     const debounceTimerRef = useRef<number | null>(null);
-    const latestTextRef = useRef<string>("");
-
     const getOrCreateModel = (file: EditorWorkspaceFile) => {
         const monaco = monacoRef.current;
+        if (!monaco) return null;
 
-        if (!monaco) {
-            return null;
+        
+        let existingModel = modelsRef.current.get(file.id);
+        if (existingModel) return existingModel;
+
+        const uri = monaco.Uri.parse(`file:///${file.fullPath}`);
+
+        let model = monaco.editor.getModel(uri);
+
+        if (!model) {
+            model = monaco.editor.createModel(
+                file.content || "", 
+                inferMonacoLanguage(file),
+                uri
+            );
+        } else {
+            if (model.getValue() !== file.content) {
+                model.setValue(file.content || "");
+            }
         }
-
-        const existingModel = modelsRef.current.get(file.id);
-
-        if (existingModel) {
-            return existingModel;
-        }
-
-        const model = monaco.editor.createModel(
-            file.content,
-            inferMonacoLanguage(file),
-            monaco.Uri.parse(`file:///${file.fullPath}`)
-        );
 
         modelsRef.current.set(file.id, model);
         return model;
@@ -55,6 +58,14 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
 
             if (model) {
                 editor.setModel(model);
+                
+                // 🚨 NEW: Restore cursor position when waking up from empty state
+                const viewState = viewStatesRef.current.get(activeFile.id);
+                if (viewState) {
+                    editor.restoreViewState(viewState);
+                }
+                editor.focus();
+                previousFileIdRef.current = activeFile.id;
             }
         }
     };
@@ -138,7 +149,7 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
         };
     }, []);
 
-    const handleEditorChange = (value?: string, event?: any) => {
+    const handleEditorChange = (value?: string) => {
         if (!activeFile) return;
 
         const editor = editorRef.current;
@@ -169,6 +180,7 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
     };
 
     if (!activeFile) {
+        editorRef.current = null;
         return (
             <div className="flex h-full items-center justify-center bg-[#0B1120] p-8 text-center text-slate-500">
                 Select a file from the explorer to open it in the editor.
