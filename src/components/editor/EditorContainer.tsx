@@ -11,10 +11,9 @@ interface EditorContainerProps {
     activeFile: EditorWorkspaceFile | null;
 }
 
-
-
 export function EditorContainer({ activeFile }: EditorContainerProps) {
     const updateFile = useEditorStore((state) => state.updateFile);
+
     // monaco editor instance and related refs
     const editorRef = useRef<EditorInstance | null>(null);
     const monacoRef = useRef<MonacoInstance | null>(null);
@@ -22,6 +21,7 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
     const viewStatesRef = useRef(new Map<string, MonacoEditor.ICodeEditorViewState | null>());
     const previousFileIdRef = useRef<string | null>(null);
     const debounceTimerRef = useRef<number | null>(null);
+    const latestTextRef = useRef<string>("");
 
     const getOrCreateModel = (file: EditorWorkspaceFile) => {
         const monaco = monacoRef.current;
@@ -59,6 +59,10 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
         }
     };
 
+    // ==========================================
+    // EFFECT 1: Handle File Switching & View States
+    // Triggered ONLY when activeFile.id changes
+    // ==========================================
     useEffect(() => {
         const editor = editorRef.current;
 
@@ -69,35 +73,58 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
 
         const previousFileId = previousFileIdRef.current;
 
-        if (previousFileId && previousFileId !== activeFile.id) {
-            viewStatesRef.current.set(previousFileId, editor.saveViewState());
-        }
+        // Only run this logic if we are actually switching to a different file
+        if (previousFileId !== activeFile.id) {
 
-        const model = getOrCreateModel(activeFile);
+            // 1. Save the view state (cursor position) of the file we are leaving
+            if (previousFileId) {
+                viewStatesRef.current.set(previousFileId, editor.saveViewState());
+            }
 
-        if (!model) {
+            // 2. Load the new file's model
+            const model = getOrCreateModel(activeFile);
+            if (model && editor.getModel() !== model) {
+                editor.setModel(model);
+            }
+
+            // 3. Restore the view state of the file we are entering
+            const viewState = viewStatesRef.current.get(activeFile.id);
+            if (viewState) {
+                editor.restoreViewState(viewState);
+            }
+
+            editor.focus();
             previousFileIdRef.current = activeFile.id;
-            return;
         }
+    }, [activeFile?.id]); // 🚨 Dependency is ONLY the ID
 
-        if (editor.getModel() !== model) {
-            editor.setModel(model);
-        }
 
+    // ==========================================
+    // EFFECT 2: Handle Remote Text Syncing
+    // Triggered ONLY when activeFile.content changes
+    // ==========================================
+    useEffect(() => {
+        const editor = editorRef.current;
+        if (!editor || !activeFile) return;
+
+        const model = editor.getModel();
+        if (!model) return;
+
+        // If the text from Zustand/WebSockets is different from our screen, merge it
         if (model.getValue() !== activeFile.content) {
-            model.setValue(activeFile.content);
+            editor.executeEdits("remote-update", [
+                {
+                    range: model.getFullModelRange(),
+                    text: activeFile.content,
+                    forceMoveMarkers: true,
+                }
+            ]);
+            editor.pushUndoStop();
         }
+    }, [activeFile?.content]); // 🚨 Dependency is ONLY the Content
 
-        const viewState = viewStatesRef.current.get(activeFile.id);
 
-        if (viewState) {
-            editor.restoreViewState(viewState);
-        }
-
-        editor.focus();
-        previousFileIdRef.current = activeFile.id;
-    }, [activeFile]);
-
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (debounceTimerRef.current !== null) {
@@ -111,16 +138,30 @@ export function EditorContainer({ activeFile }: EditorContainerProps) {
         };
     }, []);
 
-    const handleEditorChange = (value?: string) => {
-        if (!activeFile) {
+    const handleEditorChange = (value?: string, event?: any) => {
+        if (!activeFile) return;
+
+        const editor = editorRef.current;
+
+        // 🚨 THE FOCUS SHIELD 🚨
+        // If the user's cursor is not physically blinking inside the text box, 
+        // it means this change was triggered automatically by the system 
+        // (like Monaco booting up empty for a new user).
+        // We MUST ignore it, or we will broadcast an empty string and nuke the room!
+        if (!editor || !editor.hasTextFocus()) {
+            return;
+        }
+
+        const nextValue = value ?? "";
+
+        // Secondary guard: Ignore if text is identical
+        if (nextValue === activeFile.content) {
             return;
         }
 
         if (debounceTimerRef.current !== null) {
             window.clearTimeout(debounceTimerRef.current);
         }
-
-        const nextValue = value ?? "";
 
         debounceTimerRef.current = window.setTimeout(() => {
             updateFile(activeFile.id, nextValue);

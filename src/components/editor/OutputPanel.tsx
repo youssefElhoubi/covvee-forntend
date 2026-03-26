@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom";
 import { execute } from "../../services/execution";
 import type { ExecutionResult } from "../../types/ExecutionResult";
 
+
+
 export function OutputPanel() {
     const { id } = useParams();
     
