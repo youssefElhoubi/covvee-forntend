@@ -14,6 +14,7 @@ type ProjectStoreState = {
     deleteProject: (projectId: string) => Promise<void>;
     getproject: (id: string) => Promise<void>;
     searchProject :(query: string) => Promise<void>;
+    clearSearch:()=>void
 };
 
 export const projectStore = create<ProjectStoreState>((set) => ({
@@ -67,5 +68,8 @@ export const projectStore = create<ProjectStoreState>((set) => ({
         } catch (error) {
             set({ error, isLoading: false });
         }
+    },
+    clearSearch:()=>{
+        set({searchProjects:null})
     }
 }));

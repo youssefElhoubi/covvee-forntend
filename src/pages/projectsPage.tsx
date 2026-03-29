@@ -29,15 +29,14 @@ export default function ProjectsPage() {
     const searchProjects = projectStore((state) => state.searchProjects);
     const fetchProjects = projectStore((state) => state.fetchProjects);
     const searchProject = projectStore((state) => state.searchProject);
+    const clearSearch = projectStore((state) => state.clearSearch);
     
     const displayProjects = searchProjects ? searchProjects.content : projectData;
 
     const search = async (event: ChangeEvent<HTMLInputElement>) => {
         const query: string = event.target.value; 
         if (query === "") {
-            // Note: Make sure your store actually clears the `searchProjects` state 
-            // back to `null` when you call fetchProjects(), or call a specific clear function here.
-            fetchProjects();
+            clearSearch();
             return;
         }
         searchProject(query);

@@ -32,9 +32,7 @@ const FileItem = ({ file }: { file: FileResponse }) => (
     </motion.div>
 );
 
-export function ProjectCard({ project }: { project: ProjectDetailResponse }) {
-    console.log(project);
-    
+export function ProjectCard({ project }: { project: ProjectDetailResponse }) {    
     
     const navigate = useNavigate();
     return (
