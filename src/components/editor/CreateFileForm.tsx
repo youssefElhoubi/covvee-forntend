@@ -22,7 +22,6 @@ export const CreateFileForm: React.FC<CreateFileFormProps> = ({ folder, close })
                 parentFolderId: folder?.id || null,
                 projectId: id
             }
-            console.log(body);
             await createFile(body);
             close();
         } catch (error) {

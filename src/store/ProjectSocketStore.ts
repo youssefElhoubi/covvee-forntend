@@ -31,15 +31,15 @@ export const ProjectSocketStore = create<ProjectSocket>((set, get) => ({
             connectHeaders: {
                 Authorization: `Bearer ${token}`,
             },
-            // debug: (str) => console.log(str),
+            // debug: (str) =>  (str),
 
             onConnect: () => {
-                // console.log("✅ Connected to WebSocket");
+                //  ("✅ Connected to WebSocket");
                 set({ isConnected: true }); // ✅ Signal that we are ready
             },
 
             onStompError: () => {
-                // console.log("❌ STOMP error:", frame);
+                //  ("❌ STOMP error:", frame);
                 set({ loading: false, isConnected: false });
             },
             onDisconnect: () => {
@@ -63,14 +63,14 @@ export const ProjectSocketStore = create<ProjectSocket>((set, get) => ({
         const client = get().client;
         
         if (!client || !client.connected) {
-            // console.log("❌ WebSocket not connected");
+            //  ("❌ WebSocket not connected");
             return;
         }
 
         // Subscribe to topic FIRST
         client.subscribe(`/topic/project/${projectId}`, (message) => {
             const data = JSON.parse(message.body);
-            // console.log("📦 Project received:", data);
+            //  ("📦 Project received:", data);
             set({ project: data, loading: false });
         });
 

@@ -25,7 +25,6 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ folder, clos
                 parentFolderId: parentFolderId || null,
                 projectId: id
             };
-            console.log(body);
             
 
             await createFolder(body);

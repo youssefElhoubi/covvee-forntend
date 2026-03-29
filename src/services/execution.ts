@@ -3,7 +3,6 @@ import type { ExecutionResult } from "../types/ExecutionResult";
 const url = import.meta.env.VITE_API_URL;
 
 export const execute = async (params: string): Promise<ExecutionResult> => {
-    console.log(params);
     
     try {
         // Use empty string instead of literal "null" for safety

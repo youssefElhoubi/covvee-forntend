@@ -26,7 +26,7 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             return;
         }
 
-        // console.log("Initializing Covvee WebSocket Connection via Zustand...");
+        //  ("Initializing Covvee WebSocket Connection via Zustand...");
 
         const client = new Client({
             webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
@@ -47,12 +47,12 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             },
 
             onConnect: () => {
-                // console.log('Successfully connected to STOMP broker.');
+                //  ('Successfully connected to STOMP broker.');
                 set({ isConnected: true }); 
             },
             
             onDisconnect: () => {
-                // console.log('Disconnected from STOMP broker.');
+                //  ('Disconnected from STOMP broker.');
                 set({ isConnected: false, stompClient: null });
             },
 
@@ -61,7 +61,7 @@ const useWebSocketStore = create<WebSocketState>((set, get) => ({
             }
         });
         client.activate();
-        // console.log(get().isConnected);
+        //  (get().isConnected);
         
 
         

@@ -34,7 +34,6 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
     });
 
     const onSubmit = async (values: CreateProjectFormValues) => {
-        // console.log(values);
         try {
             setSubmitError("");
 
@@ -44,7 +43,6 @@ export function CreateProjectModal({ isOpen, onClose, onCreated }: CreateProject
                 visibility: values.visibility,
                 language: values.language,
             });
-            // console.log(response);
 
 
             reset();

@@ -33,6 +33,7 @@ const FileItem = ({ file }: { file: FileResponse }) => (
 );
 
 export function ProjectCard({ project }: { project: ProjectDetailResponse }) {
+    
     const navigate = useNavigate();
     return (
         <motion.div
