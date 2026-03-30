@@ -10,7 +10,9 @@ export function TopNavbar() {
         <div className="rounded-xl border border-white/10 bg-linear-to-br from-emerald-400 to-cyan-500 p-2 shadow-lg shadow-emerald-500/20">
           <Code2 className="h-5 w-5 text-slate-950" />
         </div>
-        <span className="text-sm font-semibold tracking-wide text-slate-100">Covvee</span>
+        <a href="/dashboard">
+          <span className="text-sm font-semibold tracking-wide text-slate-100">Covvee</span>
+        </a>
       </div>
 
       <div className="mx-6 hidden min-w-0 flex-1 items-center gap-1 overflow-hidden md:flex">

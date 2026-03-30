@@ -80,3 +80,24 @@ export const getproject = async (id:string)=>{
         throw error;
     }
 }
+export const search = async (query:string) => {
+    try {
+        const token: string = localStorage.getItem("token") || "";
+        const response = await fetch(`${url}/api/project/search/${query}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw errorData;
+        }        
+        return await response.json();
+    } catch (error) {
+         (error);
+        
+        throw error;
+    }
+}

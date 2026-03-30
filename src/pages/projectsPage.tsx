@@ -1,4 +1,4 @@
-import { motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     Plus,
     Search,
@@ -6,13 +6,9 @@ import {
     List
 } from 'lucide-react';
 import { ProjectCard } from '../components/ui/Project/ProjectCard';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { projectStore } from '../store/ProjectStore';
 import { CreateProjectModal } from '../components/project/CreateProjectModal';
-
-
-
-// --- Main Page Component ---
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -25,15 +21,31 @@ const containerVariants = {
     }
 };
 
-
 export default function ProjectsPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    
+    // Store connections
     const projectData = projectStore((state) => state.projects);
+    const searchProjects = projectStore((state) => state.searchProjects);
     const fetchProjects = projectStore((state) => state.fetchProjects);
+    const searchProject = projectStore((state) => state.searchProject);
+    const clearSearch = projectStore((state) => state.clearSearch);
+    
+    const displayProjects = searchProjects ? searchProjects.content : projectData;
 
+    const search = async (event: ChangeEvent<HTMLInputElement>) => {
+        const query: string = event.target.value; 
+        if (query === "") {
+            clearSearch();
+            return;
+        }
+        searchProject(query);
+    }
+    
     useEffect(() => {
         fetchProjects();
     }, [fetchProjects]);
+
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 p-6 md:p-12 font-sans selection:bg-emerald-500/30">
             {/* Background Ambience */}
@@ -66,6 +78,7 @@ export default function ProjectsPage() {
                                 type="text"
                                 placeholder="Search projects..."
                                 className="bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 w-full md:w-64 transition-all"
+                                onChange={search}
                             />
                         </div>
                         <button
@@ -95,7 +108,7 @@ export default function ProjectsPage() {
                         </button>
                     </div>
                     <div className="text-sm text-slate-500">
-                        Showing {projectData.length} projects
+                        Showing {displayProjects.length} projects
                     </div>
                 </motion.div>
 
@@ -106,9 +119,16 @@ export default function ProjectsPage() {
                     animate="visible"
                     className="grid grid-cols-1 lg:grid-cols-2 gap-8"
                 >
-                    {projectData.map((project) => (
-                        <ProjectCard key={project.id} project={project} />
-                    ))}
+                    {/* Render the active list (search results or all projects) */}
+                    {displayProjects.length > 0 ? (
+                        displayProjects.map((project) => (
+                            <ProjectCard key={project.id} project={project} />
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center py-12 text-slate-500">
+                            No projects found.
+                        </div>
+                    )}
                 </motion.div>
 
                 <CreateProjectModal
@@ -120,6 +140,3 @@ export default function ProjectsPage() {
         </div>
     );
 }
-
-// --- Sub-Component: Project Card ---
-

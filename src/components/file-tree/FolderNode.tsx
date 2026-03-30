@@ -25,6 +25,11 @@ interface FolderNodeProps {
   compact: boolean;
   folderPath: string[];
   onSelectFile: (file: FileResponse, folderPath: string[]) => void;
+  onFileContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    file: FileResponse,
+    path: string[]
+  ) => void;
   onFolderContextMenu: (
     event: MouseEvent<HTMLButtonElement>,
     folder: FolderResponse,
@@ -40,6 +45,7 @@ export function FolderNode({
   compact,
   folderPath,
   onSelectFile,
+  onFileContextMenu,
   onFolderContextMenu,
   onFolderToggle,
   selectedFileId,
@@ -58,7 +64,7 @@ export function FolderNode({
   const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onFolderContextMenu(event, folder, currentFolderPath);
-  };
+  };  
 
   return (
     <div>
@@ -92,7 +98,6 @@ export function FolderNode({
 
         {!compact ? <span className="ml-2 truncate">{folder.name}</span> : null}
       </button>
-
       <AnimatePresence initial={false}>
         {isOpen && !compact ? (
           <motion.div
@@ -103,18 +108,22 @@ export function FolderNode({
             className="overflow-hidden"
           >
             <div className="ml-2 border-l border-white/10 pl-2">
-              {folder.children.map((child) => (
-                <FolderNode
-                  key={child.id}
-                  folder={child}
-                  depth={depth + 1}
-                  compact={compact}
-                  folderPath={currentFolderPath}
-                  onSelectFile={onSelectFile}
-                  onFolderContextMenu={onFolderContextMenu}
-                  onFolderToggle={onFolderToggle}
-                  selectedFileId={selectedFileId}
-                />
+            
+            {folder.children && folder.children.length === 1 && folder.children[0] === null ? <></>:folder.children.map((child) => (
+                <>
+                  <FolderNode
+                    key={child.id}
+                    folder={child}
+                    depth={depth + 1}
+                    compact={compact}
+                    folderPath={currentFolderPath}
+                    onSelectFile={onSelectFile}
+                    onFileContextMenu={onFileContextMenu}
+                    onFolderContextMenu={onFolderContextMenu}
+                    onFolderToggle={onFolderToggle}
+                    selectedFileId={selectedFileId}
+                  />
+                </>
               ))}
               {folder.files.map((file) => (
                 <FileNode
@@ -122,6 +131,7 @@ export function FolderNode({
                   file={file}
                   depth={depth + 1}
                   onSelect={() => onSelectFile(file, currentFolderPath)}
+                  onContextMenu={(event) => onFileContextMenu(event, file, currentFolderPath)}
                   isCompact={compact}
                   isSelected={selectedFileId === file.id}
                 />

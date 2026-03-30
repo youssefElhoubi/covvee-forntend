@@ -1,57 +1,76 @@
-import type { FolderResponse } from "../../types/project.types";
+import { useState } from "react";
+import type { FolderContextMenuProps } from "../../types/project.types";
+import MenuItem from "./MenuItem";
+import { CreateFileModal } from "./popups/CreateFileModal";
+import { CreateFolderModal } from "./popups/CreateFolderModal";
+import { RenameFolderModal } from "./popups/RenameFolderModal";
+import { DeleteFolderWarning } from "./popups/DeleteFolderWarning";
 
-interface FolderContextMenuPosition {
-    x: number;
-    y: number;
-}
-
-interface FolderContextMenuProps {
-    isOpen: boolean;
-    position: FolderContextMenuPosition;
-    targetFolder: FolderResponse | null;
-    onCreateFile: () => void;
-    onCreateFolder: () => void;
-    onRename: () => void;
-    onDelete: () => void;
-}
-
-function MenuItem({ label, onClick }: { label: string; onClick: () => void }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className="w-full rounded-md px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100"
-        >
-            {label}
-        </button>
-    );
-}
+type FolderPopupAction = "create-file" | "create-folder" | "rename" | "delete" | null;
 
 export function FolderContextMenu({
     isOpen,
     position,
     targetFolder,
-    onCreateFile,
-    onCreateFolder,
-    onRename,
-    onDelete,
+    handleCloseContextMenu,
 }: FolderContextMenuProps) {
-    if (!isOpen || !targetFolder) {
-        return null;
-    }
+    const [activePopup, setActivePopup] = useState<FolderPopupAction>(null);
+    const [selectedFolder, setSelectedFolder] = useState<typeof targetFolder | null>(null);
+
+    const handleOpenPopup = (action: Exclude<FolderPopupAction, null>) => {
+        if (!targetFolder) return;
+
+        setSelectedFolder(targetFolder); // ✅ store it first
+        handleCloseContextMenu();        // then close parent menu
+        setActivePopup(action);
+    };
+
+    const closePopup = () => {
+        setActivePopup(null);
+    };
+
+    const shouldRenderMenu = isOpen && !!targetFolder;
 
     return (
-        <div
-            className="fixed z-50 min-w-52 rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl"
-            style={{ left: position.x, top: position.y }}
-            onMouseDown={(event) => event.stopPropagation()}
-            role="menu"
-            aria-label={`Folder actions for ${targetFolder.name}`}
-        >
-            <MenuItem label="Create File" onClick={onCreateFile} />
-            <MenuItem label="Create Folder" onClick={onCreateFolder} />
-            <MenuItem label="Rename" onClick={onRename} />
-            <MenuItem label="Delete" onClick={onDelete} />
-        </div>
+        <>
+            {shouldRenderMenu ? (
+                <div
+                    className="fixed z-50 min-w-52 rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl"
+                    style={{ left: position.x, top: position.y }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                    role="menu"
+                    aria-label={`Folder actions for ${targetFolder.name}`}
+                >
+                    <MenuItem label="Create File" onClick={() => handleOpenPopup("create-file")} />
+                    <MenuItem
+                        label="Create Folder"
+                        onClick={() => handleOpenPopup("create-folder")}
+                    />
+                    <MenuItem label="Rename" onClick={() => handleOpenPopup("rename")} />
+                    <MenuItem label="Delete" onClick={() => handleOpenPopup("delete")} />
+                </div>
+            ) : null}
+
+            <CreateFileModal
+                isOpen={activePopup === "create-file"}
+                folder={selectedFolder}
+                onClose={closePopup}
+            />
+            <CreateFolderModal
+                isOpen={activePopup === "create-folder"}
+                folder={selectedFolder}
+                onClose={closePopup}
+            />
+            <RenameFolderModal
+                isOpen={activePopup === "rename"}
+                folder={selectedFolder}
+                onClose={closePopup}
+            />
+            <DeleteFolderWarning
+                isOpen={activePopup === "delete"}
+                folder={selectedFolder}
+                onClose={closePopup}
+            />
+        </>
     );
 }

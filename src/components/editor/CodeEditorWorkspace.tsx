@@ -1,95 +1,62 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { projectStore } from "../../store/ProjectStore";
-import { editorTabsStore } from "../../store/editorTabsStore";
-import { useFileStore } from "../../store/useFileStore";
-import useWebSocketStore from "../../store/useWebSocketStore";
+import { useEditorStore } from "../../store/useEditorStore";
 import { FileExplorer } from "./FileExplorer";
 import { TabBar } from "./TabBar";
 import { EditorContainer } from "./EditorContainer";
 import { OutputPanel } from "./OutputPanel";
+import { ProjectSocketStore } from "../../store/ProjectSocketStore";
 
 export function CodeEditorWorkspace() {
     const { id } = useParams<{ id: string }>();
-    // stores and actions
-    const project = projectStore((state) => state.project);
-    const isLoading = projectStore((state) => state.isLoading);
-    const getproject = projectStore((state) => state.getproject);
-    const activeFile = editorTabsStore((state) => state.activeFile);
-    const initializeFileSystem = editorTabsStore((state) => state.initializeFileSystem);
-    const updateFileContent = editorTabsStore((state) => state.updateFileContent);
-    const resetEditor = editorTabsStore((state) => state.reset);
-    // web socket and file actions
-    const connectSocket = useWebSocketStore((state) => state.connect);
-    const disconnectSocket = useWebSocketStore((state) => state.disconnect);
-    const isSocketConnected = useWebSocketStore((state) => state.isConnected);
+    
+    const project = ProjectSocketStore((state) => state.project);
+    const isLoading = ProjectSocketStore((state) => state.loading);
+    const isConnected = ProjectSocketStore((state) => state.isConnected); // ✅ Track this
+    const getproject = ProjectSocketStore((state) => state.getProject);
+    const connect = ProjectSocketStore((state) => state.connect);
+    const disconnect = ProjectSocketStore((state) => state.disconnect);
+    
+    const activeFile = useEditorStore((state) => state.activeFile);
+    const initializeFileSystem = useEditorStore((state) => state.initializeFileSystem);
+    const connectSocket = useEditorStore((state) => state.connectSocket);
+    const disconnectSocket = useEditorStore((state) => state.disconnectSocket);
+    const unsubscribeAllFileEvents = useEditorStore((state) => state.unsubscribeAll);
 
-    // file store actions
-    const requestFile = useFileStore((state) => state.requestFile);
-    const publishFileUpdate = useFileStore((state) => state.updateFile);
-    const subscribeToFileContent = useFileStore((state) => state.subscribeToFileContent);
-    const unsubscribeAllFileEvents = useFileStore((state) => state.unsubscribeAll);
-    const remoteActiveFile = useFileStore((state) => state.activeFile);
-
-    useEffect(() => {
-        if (id) {
-            getproject(id);
-        }
-    }, [getproject, id]);
-
+    // 1️⃣ Handle WebSocket Connections Phase
     useEffect(() => {
         const token = localStorage.getItem("token") ?? "";
+        if (!token) return;
 
-        if (!token) {
-            return;
-        }
-
+        connect(token);
         connectSocket(token);
 
+        // Cleanup on unmount
         return () => {
-            unsubscribeAllFileEvents();
+            disconnect();
             disconnectSocket();
+            unsubscribeAllFileEvents();
         };
-    }, [connectSocket, disconnectSocket, unsubscribeAllFileEvents]);
+    }, [connect, connectSocket, disconnect, disconnectSocket, unsubscribeAllFileEvents]);
 
+    // 2️⃣ Handle Data Fetching Phase (Waits for connection!)
+    useEffect(() => {
+        if (isConnected && id) {
+            getproject(id);
+        }
+    }, [isConnected, id, getproject]);
+
+    // 3️⃣ Handle File System Init Phase
     useEffect(() => {
         if (project) {
             initializeFileSystem(project);
-            return;
         }
+    }, [initializeFileSystem, project]);
 
-        resetEditor();
-    }, [initializeFileSystem, project, resetEditor]);
-
-    useEffect(() => {
-        if (!isSocketConnected || !activeFile) {
-            return;
-        }
-
-        subscribeToFileContent(activeFile.id);
-        requestFile(activeFile.id);
-    }, [activeFile, isSocketConnected, requestFile, subscribeToFileContent]);
-
-    useEffect(() => {
-        if (!remoteActiveFile) {
-            return;
-        }
-
-        updateFileContent(remoteActiveFile.id, remoteActiveFile.content);
-    }, [remoteActiveFile, updateFileContent]);
-
-    const handleEditorContentChange = useCallback(
-        (fileId: string, content: string) => {
-            updateFileContent(fileId, content);
-            publishFileUpdate(fileId, content);
-        },
-        [publishFileUpdate, updateFileContent]
-    );
-
-    if (isLoading && !project) {
+    if (!isConnected || (isLoading && !project)) {
         return (
             <div className="flex h-full items-center justify-center bg-slate-950 text-slate-400">
-                Loading project workspace...
+                Connecting to workspace...
             </div>
         );
     }
@@ -110,7 +77,7 @@ export function CodeEditorWorkspace() {
                 <section className="flex min-h-0 min-w-0 flex-col border-r border-slate-800">
                     <TabBar />
                     <div className="min-h-0 flex-1">
-                        <EditorContainer activeFile={activeFile} onChangeContent={handleEditorContentChange} />
+                        <EditorContainer activeFile={activeFile} />
                     </div>
                 </section>
 

@@ -1,4 +1,4 @@
-import type { EditorWorkspaceFile } from "../store/editorTabsStore";
+import type { EditorWorkspaceFile } from "../store/useEditorStore";
 
 export function inferMonacoLanguage(file: EditorWorkspaceFile) {
     const extension = file.name.split(".").pop()?.toLowerCase();

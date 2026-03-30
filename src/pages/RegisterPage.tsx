@@ -50,7 +50,6 @@ export const RegisterPage = () => {
             navigator("/dashboard");
         } catch (error) {
             setError("Failed to create account. Please try again.");
-            console.log(error);
         }
     };
 
