@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { ProjectDetailResponse } from "../../types/ProjectDetailResponse";
 import { Code2 } from "lucide-react";
 
@@ -8,6 +9,7 @@ export function ProjectSumary({
     project: ProjectDetailResponse;
     compact: boolean;
 }) {
+    const navigate = useNavigate();
 
     if (compact) {
         return (
@@ -23,7 +25,7 @@ export function ProjectSumary({
         <div className="mb-2">
             <button
                 type="button"
-
+                onClick={() => navigate(`/code/${project.id}`)}
                 className="group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-all hover:bg-slate-800/50"
             >
 
